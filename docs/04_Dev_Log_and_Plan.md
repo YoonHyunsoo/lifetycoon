@@ -29,9 +29,18 @@
     *   주간 발생 확률: **5%** (검증 완료).
     *   **확정 이벤트 시점 이동**: `1월 2주` → **`3월 2주`** (초반 2달간의 적응기 부여).
 
+### 4. 📉 배포 이슈 및 해결 (Deployment Issues)
+*   **증상**: 로컬 환경(Localhost)에서는 정상이나, Vercel 배포 시 "NEW GAME" 등의 버튼이 작동하지 않거나 과거 버전 상태임.
+*   **원인**: `gameTypes.ts` 등 신규 생성 파밀 및 최신 수정 사항이 **Github에 Commit되지 않음**.
+    *   (사용자의 `force_push.bat`에 `git add/commit` 과정이 누락되어 있었음)
+*   **해결책**: `force_push.bat` 스크립트를 수정하여 `git add .` 및 `git commit` 프로세스 추가. (다음 세션에서 실행 예정)
+
 ---
 
 ## 🚀 향후 개발 계획 (To-Do List)
+
+### 🚨 긴급 수정 (Next Priority)
+- [ ] **배포 정상화**: 수정된 `force_push.bat` 실행하여 GitHub 코드 동기화 및 Vercel 재배포 확인.
 
 ### Phase 5: 로컬라이징 및 디테일 (진행 중)
 - [ ] **언어 설정 (Localization)**: 설정 메뉴에 [한국어/English] 토글 기능 추가.

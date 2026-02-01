@@ -9,11 +9,17 @@ type ScreenState = 'title' | 'create' | 'game' | 'dev';
 function App() {
   const [screen, setScreen] = useState<ScreenState>('title');
 
+  // DEBUG: Track screen changes
+  console.log('Current Screen:', screen);
+
   return (
     <div className="min-h-screen bg-black font-pixel text-white">
       {screen === 'title' && (
         <TitleScreen
-          onStart={() => setScreen('create')}
+          onStart={() => {
+            console.log('App: Switching to Create Screen');
+            setScreen('create');
+          }}
           onDevMode={() => setScreen('dev')}
         />
       )}

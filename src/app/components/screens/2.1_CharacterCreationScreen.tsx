@@ -11,7 +11,9 @@ interface CharacterCreationScreenProps {
 }
 
 const CharacterCreationScreen: React.FC<CharacterCreationScreenProps> = ({ onComplete }) => {
+    console.log('CharacterCreationScreen: Mounting...');
     const { initializeGame } = useGameStore();
+    console.log('CharacterCreationScreen: Store Hook Loaded');
 
     // Combined State
     const [name, setName] = useState('');
