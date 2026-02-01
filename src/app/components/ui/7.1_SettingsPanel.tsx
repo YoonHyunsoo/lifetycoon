@@ -23,12 +23,10 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                 <div className="border-t border-gray-700 my-2"></div>
 
                 <button
-                    onClick={() => {
-                        import('../../../lib/saveSystem').then(({ saveGame }) => {
-                            if (saveGame(useGameStore.getState(), useEventStore.getState(), 'manual')) {
-                                alert("Game Saved!");
-                            }
-                        });
+                    onClick={async () => {
+                        const { saveGame } = await import('../../../lib/saveSystem');
+                        await saveGame(useGameStore.getState(), useEventStore.getState(), 'manual');
+                        alert('Game Saved!');
                     }}
                     className="w-full bg-blue-900/50 border border-blue-500 text-blue-200 py-1 text-xs hover:bg-blue-800 mb-2"
                 >

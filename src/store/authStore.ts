@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabase';
-import { Session, User } from '@supabase/supabase-js';
+import type { Session, User } from '@supabase/supabase-js';
 
 interface AuthState {
     user: User | null;
     session: Session | null;
+    profile: { username: string } | null;
     isLoading: boolean;
     error: string | null;
 

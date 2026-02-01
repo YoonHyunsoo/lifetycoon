@@ -8,8 +8,7 @@ import CareerPathPopup from '../events/4.3_CareerPathPopup';
 import StockMarketPopup from '../events/4.5_StockMarketPopup';
 import QuestPopup from '../events/4.7_QuestPopup';
 import ResultPopup from '../events/4.4_ResultPopup';
-import Modal from '../ui/4.1_Modal';
-import PixelCard from '../ui/8.1_PixelCard';
+// import AuthModal from '../auth/AuthModal'; // Import Auth
 import CharacterCreationScreen from '../screens/2.1_CharacterCreationScreen';
 import MainGameScreen from '../screens/3.1_MainGameScreen';
 import SettingsPanel from '../ui/7.1_SettingsPanel';

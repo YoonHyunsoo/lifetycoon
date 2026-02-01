@@ -41,7 +41,7 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
                 },
                 {
                     label: 'Decline',
-                    action: (s) => ({})
+                    action: (_s) => ({})
                 }
             ]
         };
@@ -224,7 +224,7 @@ export const checkExamEvents = (state: any): GameEvent | null => {
 
         let title = "Exam Results";
         let desc = `You took the exam.\nScore: ${score} (Int: ${player.intelligence}, Effort: ${studyEffort})`;
-        let rewardAction = (s: GameState) => ({});
+        let rewardAction = (_s: GameState) => ({});
 
         // Rewards
         if (score >= 90) {
@@ -251,7 +251,7 @@ export const checkExamEvents = (state: any): GameEvent | null => {
         } else if (score > 50) {
             title = "Passed (Average)";
             desc += "\n\nYou did okay. No special reward.";
-            rewardAction = (s) => ({});
+            rewardAction = (_s) => ({});
         } else {
             title = "Failed (Bottom 50%)";
             desc += "\n\nYour parents scolded you.\n(Stress +10)";

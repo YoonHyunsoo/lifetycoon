@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from '../ui/4.1_Modal';
-import PixelButton from '../ui/8.2_PixelButton';
+// import PixelButton from '../ui/8.2_PixelButton';
 import PixelCard from '../ui/8.1_PixelCard';
 import { useGameStore } from '../../../store/gameStore';
 

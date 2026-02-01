@@ -22,8 +22,8 @@ const SystemBar: React.FC = () => {
     };
 
     // Actual Save (Passed to Popup)
-    const handleConfirmSave = () => {
-        saveGame(useGameStore.getState(), useEventStore.getState(), 'manual');
+    const handleConfirmSave = async () => {
+        await saveGame(useGameStore.getState(), useEventStore.getState(), 'manual');
         setSaveFeedback('SAVED');
         setTimeout(() => setSaveFeedback(null), 1000);
     };

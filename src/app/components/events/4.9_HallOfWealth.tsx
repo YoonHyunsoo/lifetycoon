@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getLeaderboard, LeaderboardEntry } from '../../../lib/saveSystem';
-import { fetchGlobalLeaderboard, GlobalLeaderboardEntry } from '../../../lib/leaderboard';
+import type { LeaderboardEntry } from '../../../lib/saveSystem';
+import { getLeaderboard } from '../../../lib/saveSystem';
+import type { GlobalLeaderboardEntry } from '../../../lib/leaderboard';
+import { fetchGlobalLeaderboard } from '../../../lib/leaderboard';
 
 const MOCK_LEADERS: LeaderboardEntry[] = [
     { rank: 1, name: "Elon M.", assets: 300000000000000, displayAssets: "300 Trillion ₩", date: '2024' },

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGameStore } from '../../../store/gameStore';
-import type { Quest } from '../../../store/gameStore';
+// import type { Quest } from '../../../store/gameStore';
 
 interface QuestPopupProps {
     isOpen: boolean;
