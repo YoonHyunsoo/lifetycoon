@@ -50,25 +50,8 @@ const SystemBar: React.FC = () => {
                     </div>
 
                     {/* Right: Controls (Menu, Save, Play) */}
+                    {/* Right: Controls (Menu, Save, Play) */}
                     <div className="flex gap-2">
-                        {/* RANK BUTTON */}
-                        <button
-                            onClick={() => setIsRankOpen(true)}
-                            className={`h-9 w-10 rounded border-2 flex flex-col items-center justify-center shadow-lg transition-all gap-0.5 bg-yellow-900/80 border-yellow-500 text-yellow-400 hover:bg-yellow-800 active:scale-95`}
-                        >
-                            <span className="text-[8px] font-bold uppercase leading-none mt-0.5">RANK</span>
-                            <div className="text-[10px]">🏆</div>
-                        </button>
-
-                        {/* AUTH BUTTON */}
-                        <button
-                            onClick={() => setIsAuthOpen(true)}
-                            className={`h-9 w-10 rounded border-2 flex flex-col items-center justify-center shadow-lg transition-all gap-0.5 bg-purple-900/80 border-purple-500 text-purple-400 hover:bg-purple-800 active:scale-95`}
-                        >
-                            <span className="text-[8px] font-bold uppercase leading-none mt-0.5">ID</span>
-                            <div className="text-[10px]">👤</div>
-                        </button>
-
                         {/* MENU BUTTON */}
                         <button
                             onClick={() => setIsMenuOpen(true)}
@@ -90,7 +73,7 @@ const SystemBar: React.FC = () => {
                         {/* PLAY BUTTON (Controls Time) */}
                         <button
                             onClick={togglePlay}
-                            className={`h-9 w-10 rounded border-2 flex flex-col items-center justify-center shadow-lg transition-all gap-0.5 ${isPlaying
+                            className={`h-9 w-12 rounded border-2 flex flex-col items-center justify-center shadow-lg transition-all gap-0.5 ${isPlaying
                                 ? 'bg-yellow-900/80 border-yellow-500 text-yellow-500 hover:bg-yellow-800'
                                 : 'bg-green-900/80 border-green-500 text-green-500 hover:bg-green-800 animate-pulse'
                                 }`}
@@ -98,11 +81,11 @@ const SystemBar: React.FC = () => {
                             <span className="text-[8px] font-bold uppercase leading-none mt-0.5">{isPlaying ? 'PAUSE' : 'PLAY'}</span>
                             {isPlaying ? (
                                 <div className="flex gap-1 mb-0.5">
-                                    <div className="w-1 h-2.5 bg-current"></div>
-                                    <div className="w-1 h-2.5 bg-current"></div>
+                                    <div className="w-1 h-3 bg-current"></div>
+                                    <div className="w-1 h-3 bg-current"></div>
                                 </div>
                             ) : (
-                                <div className="w-0 h-0 border-t-4 border-t-transparent border-l-[6px] border-l-current border-b-4 border-b-transparent ml-0.5 mb-0.5"></div>
+                                <div className="w-0 h-0 border-t-[5px] border-t-transparent border-l-[8px] border-l-current border-b-[5px] border-b-transparent ml-0.5 mb-0.5"></div>
                             )}
                         </button>
                     </div>
@@ -121,6 +104,8 @@ const SystemBar: React.FC = () => {
             <MenuPopup
                 isOpen={isMenuOpen}
                 onClose={() => setIsMenuOpen(false)}
+                onRank={() => setIsRankOpen(true)}
+                onAuth={() => setIsAuthOpen(true)}
             />
 
             <SavePopup

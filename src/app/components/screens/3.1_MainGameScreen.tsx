@@ -18,12 +18,21 @@ import DevControls from '../dev/DevControls';
 
 const MainGameScreen: React.FC = () => {
     const { currentEvent, dismissEvent } = useEventStore();
-    const { isPlaying, processTick, recoverPower, togglePlay } = useGameStore();
 
-    // Auto-Save Effect (Handled inside useGameStore or manually? Plan said separate)
-    // Actually, saveSystem imports are circular if used directly here vs store?
-    // Let's rely on manual save or add auto-save back if essential.
-    // For now, removing auto-save effect to simplify dev and avoid lag, verifying manual save works in SystemBar.
+    // DEBUG: Check store initialization
+    const gameState = useGameStore();
+
+    // Use default values if gameState is undefined to prevent crash, but log error
+    const { isPlaying, processTick, recoverPower, togglePlay } = gameState || {
+        isPlaying: false,
+        processTick: () => console.error("Store not loaded"),
+        recoverPower: () => { },
+        togglePlay: () => { }
+    };
+
+    if (!gameState) {
+        console.error('[Main] Critical: Game State Load Failed', useGameStore);
+    }
 
     // Game Loop 1: Power Recovery (Fast Tick: 100ms)
     useEffect(() => {
@@ -38,17 +47,25 @@ const MainGameScreen: React.FC = () => {
 
     // Game Loop 2: Time Progression (Slow Tick: 4000ms = 1 Week)
     useEffect(() => {
-        let interval: ReturnType<typeof setInterval>;
-        if (isPlaying && !currentEvent) {
-            interval = setInterval(() => {
-                processTick();
-            }, 4000); // 4 seconds per week
-        } else if (currentEvent && isPlaying) {
-            togglePlay(); // Pause on Event
-        }
-        return () => clearInterval(interval);
-    }, [isPlaying, currentEvent, processTick, togglePlay]);
+        if (!gameState || !gameState.isPlaying || currentEvent) return; // Guard
 
+        const timer = setInterval(() => {
+            if (processTick) processTick();
+        }, 4000); // User requested 4s per week
+        return () => clearInterval(timer);
+    }, [gameState?.isPlaying, currentEvent, processTick]); // Use optional chaining for dep
+
+    if (!gameState) {
+        return (
+            <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white flex-col gap-4">
+                <div className="text-red-500 font-bold text-xl">CRITICAL ERROR: Game State Failed to Load</div>
+                <div className="text-gray-400">Please check console for details.</div>
+                <button className="px-4 py-2 bg-blue-600 rounded" onClick={() => window.location.reload()}>Reload</button>
+            </div>
+        );
+    }
+
+    // Main Render
     return (
         <div className="flex flex-col h-screen w-full max-w-md mx-auto bg-gray-900 shadow-2xl overflow-hidden relative border-x border-gray-700">
             {/* Top HUD */}
@@ -77,29 +94,7 @@ const MainGameScreen: React.FC = () => {
             {currentEvent && (
                 <>
                     {/* Handle Normal, Choice, and Quest types with generic EventPopup */}
-                    {['normal', 'choice', 'quest'].includes(currentEvent.type) && (
-                        <EventPopup
-                            isOpen={true}
-                            onClose={dismissEvent}
-                            title={currentEvent.title}
-                            description={currentEvent.description || ''}
-                            choices={currentEvent.choices?.map(c => ({
-                                label: c.label,
-                                action: () => {
-                                    const store = useGameStore.getState();
-                                    const updates = c.action(store);
-                                    useGameStore.setState(updates);
-                                }
-                            }))}
-                        />
-                    )}
-                    {currentEvent.type === 'stock' && (
-                        <StockMarketPopup isOpen={true} onClose={dismissEvent} />
-                    )}
-                    {currentEvent.type === 'career' && (
-                        <CareerPathPopup isOpen={true} onSelect={() => dismissEvent()} />
-                    )}
-                    {currentEvent.type === 'notification' && (
+                    {['notification', 'choice', 'quest', 'normal', 'tutorial'].includes(currentEvent.type) && (
                         <EventPopup
                             isOpen={true}
                             onClose={dismissEvent}
@@ -108,29 +103,16 @@ const MainGameScreen: React.FC = () => {
                             choices={currentEvent.choices ? currentEvent.choices.map(c => ({
                                 label: c.label,
                                 action: () => {
-                                    if (c.action) {
-                                        const store = useGameStore.getState();
-                                        const updates = c.action(store);
-                                        useGameStore.setState(updates);
-                                    }
-                                    dismissEvent();
+                                    // wrapper to handle state updates if action returns object
+                                    const result = c.action(useGameStore.getState());
+                                    if (result) useGameStore.setState(result);
                                 }
-                            })) : [{ label: 'OK', action: dismissEvent }]}
-                        />
-                    )}
-                    {currentEvent.type === 'ending' && (
-                        <EndingPopup
-                            isOpen={true}
-                            type={currentEvent.data?.type || 'retirement'}
-                            totalAssets={currentEvent.data?.assets || 0}
-                            age={currentEvent.data?.age || 60}
-                            jobTitle={currentEvent.data?.jobTitle || 'Unknown'}
-                            onRestart={() => window.location.reload()}
+                            })) : undefined}
                         />
                     )}
 
                     {/* Fallback for Broken/Unknown Events */}
-                    {!['normal', 'choice', 'quest', 'stock', 'career', 'ending', 'notification'].includes(currentEvent.type as string) && (
+                    {!['normal', 'choice', 'quest', 'stock', 'career', 'ending', 'notification'].includes(currentEvent.type) && (
                         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80">
                             <div className="bg-white p-4 rounded text-black text-center">
                                 <h3 className="font-bold text-red-500">ERROR: Unknown Event</h3>
@@ -145,7 +127,25 @@ const MainGameScreen: React.FC = () => {
                 </>
             )}
 
-            <DevControls />
+            {/* Other Fullscreen Popups */}
+            <StockMarketPopup />
+            <CareerPathPopup />
+            {/* Ending Popup - Rendered via currentEvent data */}
+            {currentEvent && currentEvent.type === 'ending' && (
+                <EndingPopup
+                    isOpen={true}
+                    type={currentEvent.data?.type || 'retirement'}
+                    totalAssets={currentEvent.data?.assets || 0}
+                    age={currentEvent.data?.age || 60}
+                    jobTitle={currentEvent.data?.jobTitle || 'Unknown'}
+                    onRestart={() => window.location.reload()}
+                />
+            )}
+
+            {/* Dev Controls (Overlay) */}
+            <div className="absolute bottom-2 right-2 z-50 opacity-50 hover:opacity-100">
+                <DevControls />
+            </div>
         </div>
     );
 };

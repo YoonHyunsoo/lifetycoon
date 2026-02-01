@@ -1,4 +1,4 @@
-import type { GameState } from '../store/gameStore';
+import type { GameState } from '../types/gameTypes';
 
 export interface GameEvent {
     id: string;
@@ -281,19 +281,87 @@ export const checkExamEvents = (state: any): GameEvent | null => {
 // ------------------------------------------------------------
 // [EVT-ST-03] Making Friends (Social)
 // Ref: events_reference.md -> Student Phase
+// [EVT-ST-03] Friend System (Tiered & Future Investment)
+// Ref: game_mechanics.md
 // ------------------------------------------------------------
-const FRIEND_ARCHETYPES = [
-    { id: 'honor_student', name: 'Honor Student (모범생)', desc: 'Study Efficiency +50%, Study Stress +2' },
-    { id: 'delinquent', name: 'Delinquent (날나리)', desc: 'Stress Relief +5, INT Gain -1' },
-    { id: 'athlete', name: 'Athlete (운동부)', desc: 'Max Power +10, Study Stress +1' },
-    { id: 'influencer', name: 'Influencer (인싸)', desc: 'Monthly Rep +1, Max Power -5' },
-    { id: 'gamer', name: 'Gamer (겜돌이)', desc: 'Game Eff +50%, STA Gain -1' },
-    { id: 'rich_kid', name: 'Rich Kid (금수저)', desc: 'Monthly Cash +100k, Rep -1' },
-    { id: 'bookworm', name: 'Bookworm (문학소년)', desc: 'Monthly INT +1, Sense -1' },
-    { id: 'artist', name: 'Artist (예술가)', desc: 'Sense Gain +1, Monthly Cash -50k' },
-    { id: 'gossiper', name: 'Gossiper (소식통)', desc: 'Luck +5, Stress +2' },
-    { id: 'slacker', name: 'Slacker (베짱이)', desc: 'Stress Gain -2, All Gains -10%' },
+
+interface FriendArchetype {
+    id: string;
+    rank: 'S' | 'A' | 'B' | 'C' | 'D';
+    type: 'girlfriend' | 'investment' | 'normal';
+    name: string;
+    desc: string;
+    modifiers?: {
+        maxPower?: number; // Immediate change
+    };
+}
+
+const FRIEND_POOL: FriendArchetype[] = [
+    // S Rank (Future Investment)
+    { id: 'chaebol_heir', rank: 'S', type: 'investment', name: 'Chaebol Heir', desc: 'Student: Cost -50k/wk\nAdult: ??? (Huge Reward)' },
+    { id: 'politician_jr', rank: 'S', type: 'investment', name: 'Politician Jr.', desc: 'Student: None\nAdult: Manager Job Guaranteed' },
+    { id: 'genius', rank: 'S', type: 'investment', name: 'Genius', desc: 'Student: Stress +3/wk\nAdult: All Stats +10' },
+    { id: 'idol_gf', rank: 'S', type: 'girlfriend', name: 'Idol GF', desc: 'Stress -20/wk, Max Power -40\nAdult: Reputation +50', modifiers: { maxPower: -40 } },
+
+    // A Rank
+    { id: 'startup_ceo', rank: 'A', type: 'investment', name: 'Startup CEO', desc: 'Luck +2\nAdult: Venture Executive' },
+    { id: 'school_president', rank: 'A', type: 'normal', name: 'School President', desc: 'All Actions +1 Stat Bonus' },
+    { id: 'kpop_trainee', rank: 'A', type: 'normal', name: 'K-Pop Trainee', desc: 'Weekly Sense +2, Int -1' },
+    { id: 'model_gf', rank: 'A', type: 'girlfriend', name: 'Model GF', desc: 'Stress -15/wk, Max Power -30', modifiers: { maxPower: -30 } },
+
+    // B Rank
+    { id: 'rich_kid', rank: 'B', type: 'normal', name: 'Rich Kid', desc: 'Weekly Cash +50k' },
+    { id: 'honor_student', rank: 'B', type: 'normal', name: 'Honor Student', desc: 'Study: Int +1 Bonus' },
+    { id: 'athlete', rank: 'B', type: 'normal', name: 'Athlete', desc: 'Exercise: Sta +1 Bonus, Max Power +20', modifiers: { maxPower: 20 } },
+    { id: 'popular_gf', rank: 'B', type: 'girlfriend', name: 'Popular GF', desc: 'Stress -10/wk, Max Power -20', modifiers: { maxPower: -20 } },
+
+    // C Rank
+    { id: 'gamer', rank: 'C', type: 'normal', name: 'Gamer', desc: 'Play: Sense +1 Bonus' },
+    { id: 'influencer', rank: 'C', type: 'normal', name: 'Influencer', desc: 'Weekly Rep +1' },
+    { id: 'artist', rank: 'C', type: 'normal', name: 'Artist', desc: 'Weekly Sense +1' },
+    { id: 'cute_gf', rank: 'C', type: 'girlfriend', name: 'Cute GF', desc: 'Stress -7/wk, Max Power -15', modifiers: { maxPower: -15 } },
+
+    // D Rank
+    { id: 'snack_buddy', rank: 'D', type: 'normal', name: 'Snack Buddy', desc: 'Max Power +5' },
+    { id: 'gossiper', rank: 'D', type: 'normal', name: 'Gossiper', desc: 'Luck +1' },
+    { id: 'slacker', rank: 'D', type: 'normal', name: 'Slacker', desc: 'Rest: Stress -5 Bonus' },
+    { id: 'childhood_gf', rank: 'D', type: 'girlfriend', name: 'Childhood GF', desc: 'Stress -5/wk, Max Power -10', modifiers: { maxPower: -10 } },
 ];
+
+const getWeightedRandomFriend = (currentFriends: string[], friendHistory: string[]): FriendArchetype | null => {
+    // 0. Check GF Limit
+    const hasGirlfriend = currentFriends.some(fid => FRIEND_POOL.find(p => p.id === fid)?.type === 'girlfriend');
+
+    // 1. Filter available
+    let available = FRIEND_POOL.filter(f => !currentFriends.includes(f.id));
+
+    // If has GF, filter out other GFs
+    if (hasGirlfriend) {
+        available = available.filter(f => f.type !== 'girlfriend');
+    }
+
+    if (available.length === 0) return null;
+
+    // 2. Roll for Rank
+    const r = Math.random() * 100;
+    let targetRank = 'D';
+    if (r < 1) targetRank = 'S';       // 1%
+    else if (r < 5) targetRank = 'A';  // 4%
+    else if (r < 20) targetRank = 'B'; // 15%
+    else if (r < 50) targetRank = 'C'; // 30%
+    else targetRank = 'D';             // 50%
+
+    // 3. Pick from Rank
+    const pool = available.filter(f => f.rank === targetRank);
+
+    // Fallback if pool empty (e.g. rolled S but already have S friends, or blocked)
+    if (pool.length === 0) {
+        const any = available[Math.floor(Math.random() * available.length)];
+        return any;
+    }
+
+    return pool[Math.floor(Math.random() * pool.length)];
+};
 
 export const checkFriendEvents = (state: any): GameEvent | null => {
     const { time, player } = state;
@@ -301,48 +369,57 @@ export const checkFriendEvents = (state: any): GameEvent | null => {
     if (!player.isStudent) return null;
 
     // Trigger Conditions
-    const isGuaranteed = (time.year === 2024 && time.month === 3 && time.week === 1 && player.friendHistory.length === 0);
-    const isRandom = Math.random() < 0.05;
+    // Guaranteed on first month or random chance
+    const isGuaranteed = (time.year === 1 && time.month === 3 && time.week === 2 && player.friends.length === 0);
+    const isRandom = Math.random() < 0.05; // 5% chance
 
     if (!isGuaranteed && !isRandom) return null;
 
-    // Select New Friend Candidate
-    const available = FRIEND_ARCHETYPES.filter(f => !player.friendHistory.includes(f.id) && !player.friends.includes(f.id));
-    if (available.length === 0) return null;
+    const candidate = getWeightedRandomFriend(player.friends, player.friendHistory);
+    if (!candidate) return null;
 
-    const candidate = available[Math.floor(Math.random() * available.length)];
     const currentFriends = player.friends;
 
-    // Helper: Grudge Effect
-    const applyGrudge = (s: GameState, sourceName: string) => {
-        const senLoss = Math.floor(Math.random() * 4) + 2; // 2-5
-        const repLoss = Math.floor(Math.random() * 4) + 2; // 2-5
-        const newPlayer = { ...s.player };
-        newPlayer.sense = Math.max(0, newPlayer.sense - senLoss);
-        newPlayer.reputation = Math.max(0, newPlayer.reputation - repLoss);
+    // Helper: Modifiers logic
+    const applyModifiers = (s: GameState, friendId: string, revert: boolean = false) => {
+        const archetype = FRIEND_POOL.find(f => f.id === friendId);
+        if (!archetype?.modifiers?.maxPower) return {};
 
-        return {
-            player: newPlayer,
-            feedback: { id: Date.now(), text: `Grudge from ${sourceName}! (Sen -${senLoss}, Rep -${repLoss})`, color: 'text-red-500' }
-        };
+        const change = archetype.modifiers.maxPower * (revert ? -1 : 1);
+        return { maxPower: (s.maxPower || 100) + change };
     };
 
     // Helper: Add Friend
     const addFriend = (s: GameState, friendId: string) => {
+        const mods = applyModifiers(s, friendId, false);
         return {
             player: {
                 ...s.player,
                 friends: [...s.player.friends, friendId],
                 friendHistory: [...s.player.friendHistory, friendId]
             },
-            feedback: { id: Date.now(), text: `New Friend Added!`, color: 'text-green-500' }
+            ...mods,
+            feedback: { id: Date.now(), text: `Friend Added! (${candidate.rank}-Rank)`, color: 'text-green-500' }
         };
     };
 
-    // Choices
+    // Helper: Grudge
+    const applyGrudge = (s: GameState, sourceName: string) => {
+        const senLoss = 5;
+        return {
+            player: { ...s.player, sense: Math.max(0, s.player.sense - senLoss) },
+            feedback: { id: Date.now(), text: `${sourceName} holds a grudge! (Sen -${senLoss})`, color: 'text-red-500' }
+        };
+    };
+
+    // Description Construction
+    const typeLabel = candidate.type === 'girlfriend' ? '💖 Girlfriend Candidate' :
+        candidate.type === 'investment' ? '🌟 Future VIP' : '👤 Friend';
+
+    const description = `[${candidate.rank} Rank] ${candidate.name}\n(${typeLabel})\n\n${candidate.desc}\n\nDo you want to be friends?`;
+
     let choices = [];
 
-    // Case A: Slots Available (< 2)
     if (currentFriends.length < 2) {
         choices.push({
             label: "Become Friends",
@@ -351,47 +428,52 @@ export const checkFriendEvents = (state: any): GameEvent | null => {
         choices.push({
             label: "Reject",
             action: (s: GameState) => {
-                // 20% Grudge Chance
-                if (Math.random() < 0.2) return applyGrudge(s, candidate.name);
-                return { player: { ...s.player, friendHistory: [...s.player.friendHistory, candidate.id] } }; // No grudge, but recorded
+                if (Math.random() < 0.3) return applyGrudge(s, candidate.name);
+                return { player: { ...s.player, friendHistory: [...s.player.friendHistory, candidate.id] } };
             }
         });
-    }
-    // Case B: Slots Full (== 2)
-    else {
-        // Swap Options
+    } else {
+        // Swap Logic
         currentFriends.forEach((fid: string) => {
-            const friendName = FRIEND_ARCHETYPES.find(f => f.id === fid)?.name || fid;
+            const f = FRIEND_POOL.find(p => p.id === fid);
+            const fname = f ? f.name : fid;
+
+            // Check if swapping GF for GF (Allowed) or Normal for GF (Allowed if no other GF)
+            // Wait, getWeightedRandomFriend already filtered based on CURRENT friends.
+            // If we are swapping, we might be REMOVING a GF, so we could theoretically accept a new GF?
+            // BUT candidate is already picked. 
+            // If candidate IS a GF, that means we definitely didn't have a GF (or logic allowed it).
+            // Actually, if we have 2 friends and one IS a GF, `getWeighted` would filter out GF candidates.
+            // So we can never swap TO a GF if we already have one, unless we are swapping THE GF.
+            // But `getWeighted` doesn't know we are going to swap. It just sees "Has GF".
+            // So if slots are full and one is GF, we can't roll a new GF to replace the old GF.
+            // This is acceptable constraint: "You must break up (free slot) before meeting new GF".
+            // Or we relax the filter if slots are full? No, let's keep it simple.
+
             choices.push({
-                label: `Replace ${friendName}`,
+                label: `Replace ${fname}`,
                 action: (s: GameState) => {
-                    // 50% Grudge from Old Friend
-                    let updates: any = {
+                    // Revert old
+                    const revertMods = applyModifiers(s, fid, true);
+                    // Apply new
+                    const newMods = applyModifiers({ ...s, ...revertMods }, candidate.id, false); // Chain maxPower update
+
+                    return {
+                        ...newMods, // Has final maxPower
                         player: {
                             ...s.player,
-                            friends: s.player.friends.map((id: string) => id === fid ? candidate.id : id), // Replace
+                            friends: s.player.friends.map((id: string) => id === fid ? candidate.id : id),
                             friendHistory: [...s.player.friendHistory, candidate.id]
-                        }
+                        },
+                        feedback: { id: Date.now(), text: `Swapped to ${candidate.name}!`, color: 'text-blue-500' }
                     };
-
-                    if (Math.random() < 0.5) {
-                        const grudgeUpdates = applyGrudge(s, friendName);
-                        updates.player = { ...updates.player, ...grudgeUpdates.player };
-                        updates.feedback = grudgeUpdates.feedback;
-                    } else {
-                        updates.feedback = { id: Date.now(), text: `Swapped friends peacefully.`, color: 'text-blue-500' };
-                    }
-                    return updates;
                 }
             });
         });
-
-        // Reject New
         choices.push({
             label: "Reject New Friend",
             action: (s: GameState) => {
-                // 20% Grudge from New Candidate
-                if (Math.random() < 0.2) return applyGrudge(s, candidate.name);
+                if (Math.random() < 0.3) return applyGrudge(s, candidate.name);
                 return { player: { ...s.player, friendHistory: [...s.player.friendHistory, candidate.id] } };
             }
         });
@@ -400,8 +482,8 @@ export const checkFriendEvents = (state: any): GameEvent | null => {
     return {
         id: `friend-${Date.now()}`,
         type: 'choice',
-        title: 'Making Friends?',
-        description: `${candidate.name} wants to be your friend.\n\nOnly 2 Best Friends allowed.\nEffect: ${candidate.desc}`,
+        title: 'New Connection!',
+        description: description,
         choices: choices
     };
 };

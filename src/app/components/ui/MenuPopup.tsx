@@ -3,14 +3,12 @@ import React from 'react';
 interface MenuPopupProps {
     isOpen: boolean;
     onClose: () => void;
+    onRank: () => void;
+    onAuth: () => void;
 }
 
-const MenuPopup: React.FC<MenuPopupProps> = ({ isOpen, onClose }) => {
+const MenuPopup: React.FC<MenuPopupProps> = ({ isOpen, onClose, onRank, onAuth }) => {
     if (!isOpen) return null;
-
-    const handleNotImplemented = () => {
-        alert("Coming Soon! (준비중)");
-    };
 
     const handleMainMenu = () => {
         if (confirm("Return to Main Menu? Unsaved progress will be lost.")) {
@@ -34,8 +32,8 @@ const MenuPopup: React.FC<MenuPopupProps> = ({ isOpen, onClose }) => {
                 </h2>
 
                 <div className="flex flex-col gap-3">
-                    <MenuButton label="Settings" onClick={handleNotImplemented} icon="⚙️" />
-                    <MenuButton label="Language" onClick={handleNotImplemented} icon="🌐" />
+                    <MenuButton label="My Profile (ID)" onClick={() => { onClose(); onAuth(); }} icon="👤" color="purple" />
+                    <MenuButton label="Global Rank" onClick={() => { onClose(); onRank(); }} icon="🏆" color="yellow" />
                     <div className="h-px bg-gray-700 my-1" />
                     <MenuButton label="Return to Title" onClick={handleMainMenu} icon="🏠" color="red" />
                 </div>
@@ -48,14 +46,16 @@ interface MenuButtonProps {
     label: string;
     onClick: () => void;
     icon: string;
-    color?: 'default' | 'red';
+    color?: 'default' | 'red' | 'purple' | 'yellow';
 }
 
 const MenuButton: React.FC<MenuButtonProps> = ({ label, onClick, icon, color = 'default' }) => {
     const baseClass = "w-full py-3 px-4 rounded border-2 flex items-center gap-3 transition-all active:scale-95 font-pixel text-sm";
-    const colorClass = color === 'red'
-        ? "bg-red-900/50 border-red-600 text-red-100 hover:bg-red-800"
-        : "bg-gray-700 border-gray-500 text-gray-200 hover:bg-gray-600 hover:text-white";
+
+    let colorClass = "bg-gray-700 border-gray-500 text-gray-200 hover:bg-gray-600 hover:text-white";
+    if (color === 'red') colorClass = "bg-red-900/50 border-red-600 text-red-100 hover:bg-red-800";
+    if (color === 'purple') colorClass = "bg-purple-900/50 border-purple-500 text-purple-100 hover:bg-purple-800";
+    if (color === 'yellow') colorClass = "bg-yellow-900/50 border-yellow-500 text-yellow-100 hover:bg-yellow-800";
 
     return (
         <button onClick={onClick} className={`${baseClass} ${colorClass}`}>

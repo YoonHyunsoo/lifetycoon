@@ -24,7 +24,10 @@ const PixelButton: React.FC<PixelButtonProps> = ({ onClick, children, variant = 
 
     return (
         <button
-            className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className} `}
+            className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+            onClick={onClick}
+            disabled={disabled || isLoading}
+            type={type}
             {...props}
         >
             {children}

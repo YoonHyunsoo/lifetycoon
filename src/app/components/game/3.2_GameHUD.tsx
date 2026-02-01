@@ -2,7 +2,9 @@ import React from 'react';
 import { useGameStore } from '../../../store/gameStore';
 
 const GameHUD: React.FC = () => {
-  const { time, player } = useGameStore();
+  const gameState = useGameStore();
+  if (!gameState) return null; // Safety guard
+  const { time, player } = gameState;
 
   return (
     <div className="w-full bg-gray-800 border-b-4 border-gray-700 p-2 flex flex-col gap-1 text-xs shadow-lg relative h-16">
@@ -84,10 +86,10 @@ const StatBox: React.FC<{ player: any }> = ({ player }) => {
   };
 
   const descriptions: Record<string, string> = {
-    INT: "Affects exam scores, certifications, and stock analysis.",
-    STA: "Action efficiency (PWR cost) and Stress resistance.",
-    SEN: "Success rate for interviews, dating, and office politics.",
-    LUCK: "Event frequency and lottery/business jackpot chance."
+    INT: "Intelligence.\n[Exam Score] = Int + (Study Count * 2)\nStudy hard for the test months (5, 7, 10, 12)!",
+    STA: `Stamina.\nReduces Action Cost!\nformula: Cost - floor(STA/10)\nCurrent Reduction: -${Math.floor(player.stamina / 10)} Cost`,
+    SEN: "Sense (Gaming/Art).\nRequired for certain jobs & romances.\nPlay games to increase!",
+    LUCK: "Luck.\nAffects random events & critical success."
   };
 
   return (
@@ -113,7 +115,7 @@ const StatusBox: React.FC<{ player: any }> = ({ player }) => {
   };
 
   const descriptions: Record<string, string> = {
-    STRESS: "Mental/Physical fatigue. High stress reduces efficiency.\nReaching 50 results in Game Over.",
+    STRESS: "Fatigue Level.\nHigh Stress = Higher Action Cost!\n[30+] Cost +10  [40+] Cost +20\nRest to recover!",
     REP: "Social Status.\nCrucial for employment and promotion."
   };
 
