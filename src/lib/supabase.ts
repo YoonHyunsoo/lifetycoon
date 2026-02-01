@@ -7,7 +7,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
     console.warn('Supabase URL or Key is missing in .env');
 }
 
-export const supabase = createClient(
-    supabaseUrl || '',
-    supabaseAnonKey || ''
-);
+// Safe Initialization
+const url = supabaseUrl || 'https://placeholder.supabase.co';
+const key = supabaseAnonKey || 'placeholder-key';
+
+if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('🚨 Supabase Keys Missing! Check .env or Vercel Settings.');
+}
+
+export const supabase = createClient(url, key);
