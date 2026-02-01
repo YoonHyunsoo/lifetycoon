@@ -4,7 +4,7 @@ import { useEventStore } from '../../../store/eventStore';
 
 const DevControls: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const { player, time } = useGameStore();
+    const { player } = useGameStore();
     const { triggerEvent } = useEventStore();
     const [customEventId, setCustomEventId] = useState("");
 

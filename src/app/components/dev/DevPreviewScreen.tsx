@@ -31,9 +31,9 @@ const DevPreviewScreen: React.FC<DevPreviewScreenProps> = ({ onBack }) => {
         { id: 3, rank: '#3', name: 'Newbie', assets: '1억' },
     ];
     const mockTableColumns = [
-        { header: 'Rank', key: 'rank' as const, width: 'w-12' },
-        { header: 'Name', key: 'name' as const },
-        { header: 'Assets', key: 'assets' as const, width: 'w-24' },
+        { header: "RANK", accessor: "rank" },
+        { header: "NAME", accessor: "name" },
+        { header: "ASSETS", accessor: "assets" }
     ];
 
     const renderComponent = () => {

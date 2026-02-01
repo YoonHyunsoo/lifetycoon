@@ -1,4 +1,3 @@
-```javascript
 import React from 'react';
 
 interface PixelButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -8,8 +7,8 @@ interface PixelButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 const PixelButton: React.FC<PixelButtonProps> = ({ onClick, children, variant = 'primary', size = 'md', className = '', type = 'button', disabled = false, isLoading = false, ...props }) => {
-    
-    const baseStyle = "font-pixel font-bold uppercase transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2";
+
+    const baseStyles = "font-pixel font-bold uppercase transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2";
 
     const variants = {
         primary: "bg-blue-600 border-blue-800 text-white hover:bg-blue-500",
@@ -25,7 +24,7 @@ const PixelButton: React.FC<PixelButtonProps> = ({ onClick, children, variant = 
 
     return (
         <button
-            className={`${ baseStyles } ${ variants[variant] } ${ sizes[size] } ${ className } `}
+            className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className} `}
             {...props}
         >
             {children}

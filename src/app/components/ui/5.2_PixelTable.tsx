@@ -1,42 +1,35 @@
-import React from 'react';
+// import React from 'react';
 
-interface Column<T> {
-    header: string;
-    key: keyof T;
-    width?: string;
+interface PixelTableProps {
+    data: any[];
+    columns: { header: string, accessor: string }[];
 }
 
-interface PixelTableProps<T> {
-    data: T[];
-    columns: Column<T>[];
-}
-
-function PixelTable<T extends { id: string | number }>({ data, columns }: PixelTableProps<T>) {
+const PixelTable: React.FC<PixelTableProps> = ({ data, columns }) => {
     return (
-        <div className="w-full border-2 border-gray-700 bg-gray-900">
-            {/* Header */}
-            <div className="flex border-b-2 border-gray-700 bg-gray-800">
-                {columns.map((col) => (
-                    <div key={col.header} className={`p-2 text-xs font-bold text-gray-400 ${col.width || 'flex-1'}`}>
-                        {col.header}
-                    </div>
-                ))}
-            </div>
-
-            {/* Body */}
-            <div className="flex flex-col">
+        <table className="w-full text-xs text-left">
+            <thead className="bg-gray-800 text-gray-400">
+                <tr>
+                    {columns.map((col) => (
+                        <th key={col.accessor} className="p-2 border-b border-gray-700">
+                            {col.header}
+                        </th>
+                    ))}
+                </tr>
+            </thead>
+            <tbody>
                 {data.map((row, idx) => (
-                    <div key={row.id} className="flex border-b border-gray-800 last:border-b-0 hover:bg-gray-800">
+                    <tr key={idx} className="border-b border-gray-700 hover:bg-gray-800">
                         {columns.map((col) => (
-                            <div key={`${row.id}-${String(col.key)}`} className={`p-2 text-xs text-white ${col.width || 'flex-1'}`}>
-                                {String(row[col.key])}
-                            </div>
+                            <td key={col.accessor} className="p-2 text-gray-300">
+                                {row[col.accessor]}
+                            </td>
                         ))}
-                    </div>
+                    </tr>
                 ))}
-            </div>
-        </div>
+            </tbody>
+        </table>
     );
-}
+};
 
 export default PixelTable;

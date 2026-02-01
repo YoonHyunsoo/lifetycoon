@@ -18,7 +18,7 @@ import DevControls from '../dev/DevControls';
 
 const MainGameScreen: React.FC = () => {
     const { currentEvent, dismissEvent } = useEventStore();
-    const { isPlaying, processTick, recoverPower, togglePlay, time } = useGameStore();
+    const { isPlaying, processTick, recoverPower, togglePlay } = useGameStore();
 
     // Auto-Save Effect (Handled inside useGameStore or manually? Plan said separate)
     // Actually, saveSystem imports are circular if used directly here vs store?
