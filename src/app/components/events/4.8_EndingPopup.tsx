@@ -116,9 +116,26 @@ const EndingPopup: React.FC<EndingPopupProps> = ({ isOpen, type, totalAssets, ag
                     )
                 ) : (
                     <div className="text-[10px] text-gray-500">
-                        * Login to submit score to Global Leaderboard
+                        * Login to compare with others
                     </div>
                 )}
+
+                {/* [VIRAL] Web Share API */}
+                <PixelButton onClick={() => {
+                    const shareData = {
+                        title: 'Mudspoon Tycoon',
+                        text: `I ended as a ${rank} (Assets: ${totalAssets.toLocaleString()} ₩) in Mudspoon Tycoon! Can you beat me?`,
+                        url: 'https://mudspoon.app'
+                    };
+                    if (navigator.share) {
+                        navigator.share(shareData).catch(console.error);
+                    } else {
+                        navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+                        alert("Result copied to clipboard!");
+                    }
+                }} className="bg-blue-600 hover:bg-blue-500 border-blue-400 text-white">
+                    📤 SHARE RESULT
+                </PixelButton>
 
                 <div className="flex flex-col gap-3 mt-2">
                     {/* [MONETIZATION] Revive Button */}

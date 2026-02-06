@@ -4,7 +4,7 @@ import { useGameStore } from '../../../store/gameStore';
 const RoomView: React.FC = () => {
     const { player } = useGameStore();
 
-    const bgImage = player.isStudent ? '/assets/bg_classroom.png' : '/assets/bg_city.png';
+    const bgImage = player.isStudent ? '/assets/bg_classroom.png' : '/assets/bg_studio_room.png';
 
     return (
         <div className="w-full h-full relative bg-gray-700 flex flex-col items-center justify-end overflow-hidden border-x border-gray-800">
@@ -23,10 +23,17 @@ const RoomView: React.FC = () => {
             </div>
 
             {/* Character Sprite Placeholder */}
+            {/* Character Sprite */}
             <div className="z-10 mb-8 transform scale-150 origin-bottom">
-                <div className="w-16 h-16 bg-blue-500 rounded-lg border-4 border-black animate-pulse flex items-center justify-center text-white text-xs text-center leading-tight">
-                    PIXEL<br />CHAR
-                </div>
+                <img
+                    src="/assets/char_idle.png"
+                    alt="Character"
+                    className="w-16 h-16 object-contain pixelated animate-bounce-small"
+                    onError={(e) => {
+                        e.currentTarget.style.display = 'none'; // Hide if missing, fallback to div below?
+                        e.currentTarget.parentElement!.innerHTML = '<div class="w-16 h-16 bg-blue-500 rounded-lg border-4 border-black animate-pulse flex items-center justify-center text-white text-xs text-center leading-tight">PIXEL<br/>CHAR</div>';
+                    }}
+                />
             </div>
 
             {/* Floor */}
