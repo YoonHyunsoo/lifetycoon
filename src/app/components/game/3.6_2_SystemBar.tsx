@@ -9,7 +9,7 @@ import HallOfWealth from '../events/4.9_HallOfWealth';
 import AuthModal from '../auth/AuthModal'; // Import Auth
 
 const SystemBar: React.FC = () => {
-    const { time, isPlaying, togglePlay, power, maxPower } = useGameStore();
+    const { time, isPlaying, togglePlay, power, maxPower, player } = useGameStore();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
     const [isRankOpen, setIsRankOpen] = useState(false);
@@ -91,13 +91,25 @@ const SystemBar: React.FC = () => {
                     </div>
                 </div>
 
-                {/* POWER GAUGE */}
-                <div className="px-1">
-                    <div className="flex justify-between text-xs mb-1">
-                        <span className="text-yellow-500 font-bold">POWER</span>
-                        <span className="text-gray-400">{Math.floor(power)} / {maxPower}</span>
+                {/* STRESS & POWER GAUGES */}
+                <div className="px-1 flex flex-col gap-1">
+                    {/* STRESS GAUGE */}
+                    <div>
+                        <div className="flex justify-between text-xs mb-0.5">
+                            <span className="text-red-500 font-bold text-[10px]">STRESS</span>
+                            <span className="text-gray-400 text-[10px]">{player.stress} / 50</span>
+                        </div>
+                        <PixelGauge value={player.stress} max={50} color="red" />
                     </div>
-                    <PixelGauge value={power} max={maxPower} color="yellow" />
+
+                    {/* POWER GAUGE */}
+                    <div>
+                        <div className="flex justify-between text-xs mb-0.5">
+                            <span className="text-yellow-500 font-bold text-[10px]">POWER</span>
+                            <span className="text-gray-400 text-[10px]">{Math.floor(power)} / {maxPower}</span>
+                        </div>
+                        <PixelGauge value={power} max={maxPower} color="yellow" />
+                    </div>
                 </div>
             </div>
 

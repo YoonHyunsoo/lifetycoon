@@ -14,6 +14,26 @@ React + TypeScript + Vite로 제작된 웹 기반 인생 시뮬레이션 게임�
 
 ---
 
+## 3. Authentication Strategy (New)
+**Goal**: Enable One-Click Login via Google.
+**Provider**: Supabase Auth (Google OAuth)
+
+### A. Setup Steps
+1.  **GCP Console**: Create OAuth Client ID.
+    - Authorized Redirect URI: `https://ggrwhlautxsrglzyeyyo.supabase.co/auth/v1/callback`
+2.  **Supabase Dashboard**: Enable Google Provider.
+    - Paste Client ID / Secret from GCP.
+3.  **Client Implementation**:
+    - Use `supabase.auth.signInWithOAuth({ provider: 'google' })`.
+
+### B. User Flow
+- Guest User clicks "Login" -> Opens `AuthModal`.
+- Click "Login with Google".
+- Redirect to Google -> Redirect back to Game.
+- `onAuthStateChange` detects session -> Loads Cloud Save.
+
+---
+
 ## 2. Supabase Credentials (Legacy/Reference)
 **WARNING: DO NOT SHARE THIS FILE PUBLICLY OR COMMIT TO GITHUB IF IT CONTAINS REAL SECRETS.**
 *(Since this is a local development documentation, we store it here for your reference as requested)*

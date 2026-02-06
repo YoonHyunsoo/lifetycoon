@@ -83,6 +83,7 @@ export interface GameState {
 
     // Monetization State
     insiderHint: { stockId: number; trend: 'bull' | 'bear' } | null;
+    currentVisualAction: string | null; // [VISUAL] State for character animation
 
     // Actions
     initializeGame: (name: string, stats: InitialStats) => void;

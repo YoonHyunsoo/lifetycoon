@@ -16,3 +16,23 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(url, key);
+
+export const signInWithGoogle = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: `${window.location.origin}/`, // Redirects back to homepage
+            queryParams: {
+                access_type: 'offline', // Request refresh token
+                prompt: 'consent',
+            },
+        },
+    });
+
+    if (error) {
+        console.error('Google Auth Error:', error.message);
+        throw error;
+    }
+
+    return data;
+};

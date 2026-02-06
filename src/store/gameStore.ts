@@ -9,6 +9,10 @@ import { getMonthlyExpenses, checkPromotion, checkFiring, checkCompanyEvent } fr
 import { checkRandomEvents, checkExamEvents, checkFriendEvents, checkDatingEvent, checkExpandedRandomEvents } from '../lib/eventLogic';
 import type { GameState } from '../types/gameTypes';
 
+/* EXTENDING GameState Locally if not in Types file yet, or just rely on module augmentation? 
+   Let's check gameTypes.ts first? No, I'll just cast/assume it works for now or edit Types.
+   Actually, better to edit Types first to be safe. */
+
 console.log('Loading gameStore.ts...'); // DEBUG
 
 export const useGameStore = create<GameState>((set, get) => {
@@ -47,6 +51,7 @@ export const useGameStore = create<GameState>((set, get) => {
         stocks: INITIAL_STOCKS,
         insiderHint: null, // [MONETIZATION]
         feedback: null,
+        currentVisualAction: null, // [VISUAL] For character animation
 
         isPlaying: false,
 
@@ -495,8 +500,13 @@ export const useGameStore = create<GameState>((set, get) => {
             set({
                 player: newPlayer,
                 power: state.power - cost,
-                // feedback set in switch
+                currentVisualAction: actionType
             });
+
+            // Clear visual action after 1.5s
+            setTimeout(() => {
+                set({ currentVisualAction: null });
+            }, 1500);
         },
 
         buyStock: (id, amount) => set((state) => {

@@ -2,7 +2,7 @@ import React from 'react';
 import { useGameStore } from '../../../store/gameStore';
 
 const RoomView: React.FC = () => {
-    const { player } = useGameStore();
+    const { player, currentVisualAction } = useGameStore();
 
     const bgImage = player.isStudent ? '/assets/bg_classroom.png' : '/assets/bg_studio_room.png';
 
@@ -24,17 +24,53 @@ const RoomView: React.FC = () => {
 
             {/* Character Sprite Placeholder */}
             {/* Character Sprite */}
-            <div className="z-10 mb-8 transform scale-150 origin-bottom">
-                <img
-                    src="/assets/char_idle.png"
-                    alt="Character"
-                    className="w-16 h-16 object-contain pixelated animate-bounce-small"
-                    onError={(e) => {
-                        e.currentTarget.style.display = 'none'; // Hide if missing, fallback to div below?
-                        e.currentTarget.parentElement!.innerHTML = '<div class="w-16 h-16 bg-blue-500 rounded-lg border-4 border-black animate-pulse flex items-center justify-center text-white text-xs text-center leading-tight">PIXEL<br/>CHAR</div>';
-                    }}
-                />
-            </div>
+            {/* Character Sprite Logic */}
+            {(() => {
+                // 1. Determine Base Path (Age/Job Role)
+                // For now, simplify to just 'char' as requested, or 'char_student', 'char_adult' if we had them. 
+                // Using 'char' prefix.
+                // const rolePrefix = player.age < 20 ? 'student' : 'adult'; 
+                // User only uploaded char_idle.png, let's stick to base for now but implement logic structure.
+
+                // 2. Determine State Suffix
+                let suffix = 'idle';
+
+                if (currentVisualAction) {
+                    // Action State (1.5s)
+                    suffix = currentVisualAction; // e.g., 'study', 'exercise'
+                } else {
+                    // Idle State (Based on Stress)
+                    if (player.stress >= 40) suffix = 'exhausted';
+                    else if (player.stress >= 20) suffix = 'tired';
+                    else suffix = 'idle'; // Happy/Normal
+                }
+
+                // 3. Construct Path
+                // Fallback Logic: Since we only have char_idle.png right now,
+                // we'll try to use specific ones, but onError will fallback to char_idle.
+                // Filename format: char_{suffix}.png
+                const spritePath = `/assets/char_${suffix}.png`;
+
+                return (
+                    <div className="z-10 mb-8 transform scale-150 origin-bottom h-[15vh] max-h-[150px] aspect-square flex items-end justify-center">
+                        <img
+                            key={spritePath} // Force re-render on change
+                            src={spritePath}
+                            alt={`Character ${suffix}`}
+                            className="w-full h-full object-contain pixelated animate-bounce-small mix-blend-multiply"
+                            onError={(e) => {
+                                // Fallback to char_idle.png if specific action sprite missing
+                                if (e.currentTarget.src.includes('char_idle.png')) {
+                                    // If even idle fails, hide
+                                    e.currentTarget.style.display = 'none';
+                                } else {
+                                    e.currentTarget.src = '/assets/char_idle.png';
+                                }
+                            }}
+                        />
+                    </div>
+                );
+            })()}
 
             {/* Floor */}
             <div className="absolute bottom-0 w-full h-8 bg-[#3a2e26] border-t-4 border-[#2a221c]" />

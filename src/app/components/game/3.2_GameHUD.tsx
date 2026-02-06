@@ -123,16 +123,7 @@ const StatusBox: React.FC<{ player: any }> = ({ player }) => {
     <div className="absolute top-[215px] left-0 bg-gray-900 text-white border-2 border-gray-600 rounded p-2 shadow-lg z-30 flex flex-col gap-2 w-28">
       <div className="text-xs font-bold border-b border-gray-600 pb-1 mb-1 text-center bg-gray-800 text-gray-300">STATUS</div>
 
-      {/* Stress */}
-      <div className="flex flex-col cursor-pointer hover:bg-gray-800/50 rounded p-0.5 transition-colors" onClick={() => handleClick('STRESS')}>
-        <div className="text-[10px] text-gray-400 font-bold hover:text-white transition-colors">STRESS</div>
-        <div className="flex flex-col gap-0.5 mt-2">
-          <div className={`text-[10px] text-right ${player.stress >= 40 ? 'text-red-500 animate-pulse' : 'text-gray-200'}`}>{player.stress}/50</div>
-          <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
-            <div className="h-full bg-red-500 transition-all duration-500" style={{ width: `${Math.min(100, (player.stress / 50) * 100)}%` }}></div>
-          </div>
-        </div>
-      </div>
+
 
       {/* Reputation */}
       <div className="flex flex-col cursor-pointer hover:bg-gray-800/50 rounded p-0.5 transition-colors" onClick={() => handleClick('REP')}>

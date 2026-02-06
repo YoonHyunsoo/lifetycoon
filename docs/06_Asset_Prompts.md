@@ -1,62 +1,85 @@
-# 🎨 AI Image Generation Prompts (Mudspoon Tycoon)
+# 🎨 Mudspoon Tycoon: AI 이미지 생성 프롬프트 (상세본)
 
-이미지 생성 AI (Gemini, Midjourney, DALL-E 3)를 위한 프롬프트 가이드입니다.
-각 프롬프트는 "Pixel Art" 스타일을 강조하여 게임의 레트로 감성을 유지하도록 작성되었습니다.
+Gemini에 그대로 복사해서 붙여넣으세요.
+(모든 프롬프트는 "Pixel Art", "White Background" 설정을 포함하고 있습니다.)
 
 ---
 
-## 1. 🌃 메인 배경 (Night City)
-* **파일명**: `bg_city_night.png`
-* **추천 비율**: 16:9 (가로형)
-* **추천 사이즈**: 1280 x 720 px
+## 🏗️ 배경 이미지 (Backgrounds)
+**사이즈**: 1280 x 720 (16:9)
 
-### 📋 프롬프트 (Prompt)
+### 1. 🌃 `bg_city_night.png` (메인화면)
 ```text
-pixel art of a generic modern city skyline at night, view from a distance, skyscraper silhouettes, neon lights, dark blue and purple night sky, stars, lo-fi aesthetic, 16-bit retro game style, no text, clean composition
+pixel art of a cyberpunk city skyline at night, distant view, glowing neon lights in blue and purple, skyscrapers, starry night sky, calm atmosphere, lo-fi aesthetic, 16-bit retro game style, clean composition, no text
+```
+
+### 2. 🏫 `bg_classroom.png` (학생방)
+```text
+pixel art of a high school classroom interaction, daytime, sunlight beaming through windows, wooden desks aligned in rows, a green chalkboard on the front wall, cozy and nostalgic atmosphere, anime style background, 16-bit retro game style, wide view
+```
+
+### 3. 🏠 `bg_studio_room.png` (자취방)
+```text
+pixel art of a small one-room studio apartment interior at night, messy but cozy, single bed, computer desk with glowing screen, cup noodles on table, large window showing city lights, isometric perspective, 16-bit retro game style, detailed texture
 ```
 
 ---
 
-## 2. 🏫 학교 교실 (Classroom)
-* **파일명**: `bg_classroom.png` (학생 단계 배경)
-* **추천 비율**: 16:9 (가로형)
-* **추천 사이즈**: 1280 x 720 px
+## 🧍 캐릭터 상태 (Character States)
+**사이즈**: 512 x 512 (1:1)
+**필수**: 생성 후 배경 제거(Remove Background) 필요
 
-### 📋 프롬프트 (Prompt)
+### 4. 🙂 `char_idle.png` (기본 - 행복)
 ```text
-pixel art of an empty high school classroom interior, daytime, sunlight streaming through windows, wooden desks and chairs arranged in rows, green chalkboard at the front, cozy atmosphere, anime style background, 16-bit retro game style, wide angle view
+pixel art character sprite of a young man, full body shot, front view, wearing casual hoodie and jeans, standing still, neutral to happy expression, hands in pockets, cute proportions, simple flat design, solid white background, 16-bit retro style
+```
+
+### 5. 😓 `char_tired.png` (스트레스 보통 - 힘듦)
+```text
+pixel art character sprite of a young man, full body shot, front view, wearing casual hoodie, sweating drops on face, wiping sweat with hand, slightly tired expression, mouth open slightly, solid white background, 16-bit retro style
+```
+
+### 6. 🧟 `char_exhausted.png` (스트레스 높음 - 좀비)
+```text
+pixel art character sprite of a young man, full body shot, front view, looking completely exhausted, dark circles under eyes, slumped shoulders, gloopy purple aura or soul leaving body, zombie-like posture, solid white background, 16-bit retro style
 ```
 
 ---
 
-## 3. 🏠 자취방 (Studio Apartment)
-* **파일명**: `bg_studio_room.png` (성인/취준생 단계 배경 - *코드에서 `bg_city.png` 대신 이걸 사용하는걸 추천*)
-* **추천 비율**: 16:9 (가로형)
-* **추천 사이즈**: 1280 x 720 px
+## 🎬 캐릭터 행동 (Actions)
+버튼을 눌렀을 때 1.5초간 나오는 모션입니다.
 
-### 📋 프롬프트 (Prompt)
+### 7. 📖 `char_study.png` (공부)
 ```text
-pixel art of a small messy one-room studio apartment interior at night, computer desk with glowing monitor, cup of instant noodles, large window with city night view, single bed, cozy and lived-in vibe, isometric view or wide view, 16-bit retro game style
+pixel art character sprite of a young man sitting at a desk reading a book, intense concentration, headband on head, stack of books nearby, side view or 3/4 view, solid white background, 16-bit retro style
 ```
 
----
-
-## 4. 🧍 캐릭터 (Main Character)
-* **파일명**: `char_idle.png`
-* **추천 비율**: 1:1 (정사각형)
-* **추천 사이즈**: 512 x 512 px (생성 후 배경 제거 필요)
-* **Tip**: 생성 후 [remove.bg](https://www.remove.bg) 같은 사이트에서 흰색 배경을 투명하게 만드세요.
-
-### 📋 프롬프트 (Prompt)
+### 8. 💪 `char_exercise.png` (운동)
 ```text
-pixel art character sprite of a young casual man, full body shot, facing forward, wearing a hoodie and jeans, neutral expression, idle pose, simple flat design, solid white background, 8-bit or 16-bit retro game style, cute proportions
+pixel art character sprite of a young man lifting heavy dumbbells, sweat flying, face red from exertion, wearing workout headband and tank top, energetic pose, solid white background, 16-bit retro style
 ```
 
----
+### 9. 🎮 `char_club.png` (게임/동아리)
+```text
+pixel art character sprite of a young man holding a game controller, excited expression, mashing buttons, sparks or lightning effects around controller to show intensity, solid white background, 16-bit retro style
+```
 
-## 🚀 적용 방법
-1. 위 프롬프트로 이미지를 생성합니다.
-2. 다운로드한 이미지의 이름을 위 **파일명**과 똑같이 변경합니다.
-3. 프로젝트의 `public/assets/` 폴더 안에 넣어주세요.
-   (폴더가 없다면 `public` 안에 `assets` 폴더를 새로 만드세요)
-4. 배포하면 자동으로 적용됩니다!
+### 10. 💤 `char_rest.png` (휴식/잠)
+```text
+pixel art character sprite of a young man lying on a bed sleeping, 'Zzz' symbol floating above head, peaceful expression, covered with a blanket, solid white background, 16-bit retro style
+```
+
+### 11. 💼 `char_work.png` (회사일/야근)
+```text
+pixel art character sprite of a young man wearing a business suit, holding a briefcase, running frantically or looking at a watch, stressed businessman vibe, solid white background, 16-bit retro style
+```
+
+### 12. 🏪 `char_part_time.png` (알바)
+```text
+pixel art character sprite of a young man wearing a convenience store vest uniform, scanning a barcode scanner, holding a product, forced smile, solid white background, 16-bit retro style
+```
+
+### 13. 📝 `char_cv.png` (이력서/취준)
+```text
+pixel art character sprite of a young man sitting at a desk writing on a piece of paper (resume), surrounded by crumpled paper balls, frustrated expression, scratching head with pencil, solid white background, 16-bit retro style
+```
