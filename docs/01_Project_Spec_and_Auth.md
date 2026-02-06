@@ -1,7 +1,7 @@
 # Project Specification & Credentials
 
 ## 📖 프로젝트 소개 (Project Overview)
-**Life Tycoon (인생 타이쿤)**
+**Mudspoon Tycoon (흙수저 타이쿤)**
 React + TypeScript + Vite로 제작된 웹 기반 인생 시뮬레이션 게임입니다. 플레이어는 캐릭터의 인생을 관리하며 매주 스케줄을 결정하고, 운과 선택을 통해 다양한 인생을 경험합니다.
 
 ## 1. Technical Stack (Overview)

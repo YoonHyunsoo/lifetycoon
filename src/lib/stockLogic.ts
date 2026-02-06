@@ -22,9 +22,20 @@ const getRandomVariable = () => {
     return values[Math.floor(Math.random() * values.length)];
 };
 
-export const updateStockPrices = (stocks: Stock[]): Stock[] => {
+export const updateStockPrices = (stocks: Stock[], insiderHint: { stockId: number; trend: 'bull' | 'bear' } | null = null): Stock[] => {
     return stocks.map(stock => {
-        const r = getRandomVariable();
+        let r = getRandomVariable();
+
+        // [MONETIZATION] Apply Insider Hint
+        if (insiderHint && insiderHint.stockId === stock.id) {
+            // Force r to be positive (bull) or very negative (bear)
+            if (insiderHint.trend === 'bull') {
+                r = Math.abs(r) === 0 ? 2 : Math.abs(r); // Ensure positive
+            } else {
+                r = -Math.abs(r) === 0 ? -2 : -Math.abs(r); // Ensure negative
+            }
+        }
+
         let growthRate = 0;
 
         switch (stock.id) {

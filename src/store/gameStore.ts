@@ -37,6 +37,7 @@ export const useGameStore = create<GameState>((set, get) => {
             activeQuests: [],
             spouse: null,
             children: 0,
+            hasRevived: false, // [MONETIZATION]
             tutorialFlags: { study: false, exercise: false, club: false, rest: false },
             monthlyActionCounts: { study: 0, exercise: 0, club: 0, rest: 0 }
         },
@@ -44,6 +45,7 @@ export const useGameStore = create<GameState>((set, get) => {
         power: 100,
         maxPower: 100,
         stocks: INITIAL_STOCKS,
+        insiderHint: null, // [MONETIZATION]
         feedback: null,
 
         isPlaying: false,
@@ -71,6 +73,7 @@ export const useGameStore = create<GameState>((set, get) => {
                 debtWaiverTickets: 0,
                 spouse: null,
                 children: 0,
+                hasRevived: false, // [MONETIZATION]
                 tutorialFlags: { study: false, exercise: false, club: false, rest: false },
                 monthlyActionCounts: { study: 0, exercise: 0, club: 0, rest: 0 }
             },
@@ -208,7 +211,7 @@ export const useGameStore = create<GameState>((set, get) => {
 
 
                     // [STOCK] Update Prices
-                    const newStocks = updateStockPrices(state.stocks);
+                    const newStocks = updateStockPrices(state.stocks, state.insiderHint);
                     const currentStockValue = newStocks.reduce((acc, stock) => acc + (stock.price * stock.owned), 0);
 
                     // [CAREER] Promotion Check
@@ -249,6 +252,7 @@ export const useGameStore = create<GameState>((set, get) => {
 
                     set({
                         stocks: newStocks,
+                        insiderHint: null, // [MONETIZATION] Consumed hint for the year
                         player: {
                             ...state.player,
                             stockValue: currentStockValue,
@@ -571,5 +575,29 @@ export const useGameStore = create<GameState>((set, get) => {
                 }
             }
         })),
+
+        // [MONETIZATION] Actions
+        revivePlayer: () => set((state) => ({
+            player: {
+                ...state.player,
+                stress: 0,
+                cash: Math.max(0, state.player.cash), // Reset debt
+                hasRevived: true,
+                bankruptcyCount: state.player.bankruptcyCount
+            },
+            feedback: { id: Date.now(), text: "REVIVED! Second Chance!", color: "text-yellow-400" }
+        })),
+
+        getInsiderHint: () => {
+            const state = get();
+            const stocks = state.stocks;
+            const targetStock = stocks[Math.floor(Math.random() * stocks.length)];
+            const trend = Math.random() > 0.5 ? 'bull' : 'bear';
+
+            set({
+                insiderHint: { stockId: targetStock.id, trend },
+                feedback: { id: Date.now(), text: `Insider Info Acquired: ${targetStock.name}`, color: "text-purple-400" }
+            });
+        }
     };
 });

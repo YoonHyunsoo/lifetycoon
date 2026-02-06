@@ -25,7 +25,7 @@ const TitleScreen: React.FC<TitleScreenProps> = ({ onStart, onDevMode }) => {
                     />
 
                     <div className="text-xs text-gray-400 mt-8 animate-pulse">
-                        © 2026 LIFE TYCOON Inc.
+                        © 2026 MUDSPOON TYCOON Inc.
                     </div>
 
                     <LoadGamePopup

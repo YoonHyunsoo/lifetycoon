@@ -37,6 +37,7 @@ export interface PlayerState {
     stockValue: number;
     bankruptcyCount: number;
     debtWaiverTickets: number;
+    hasRevived: boolean; // [MONETIZATION] One-time revive check
 
     // Social
     friends: string[];
@@ -80,8 +81,13 @@ export interface GameState {
     maxPower: number;
     stocks: Stock[];
 
+    // Monetization State
+    insiderHint: { stockId: number; trend: 'bull' | 'bear' } | null;
+
     // Actions
     initializeGame: (name: string, stats: InitialStats) => void;
+    revivePlayer: () => void;
+    getInsiderHint: () => void;
     advanceWeek: () => void;
     performAction: (action: 'study' | 'exercise' | 'club' | 'rest' | 'work' | 'overtime' | 'politics' | 'major_study' | 'part_time' | 'cert_study' | 'cv') => void;
     buyStock: (id: number, amount: number) => void;

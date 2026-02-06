@@ -1,4 +1,4 @@
-# 🎮 Life Tycoon (인생 타이쿤)
+# 🎮 Mudspoon Tycoon (흙수저 타이쿤)
 
 React + TypeScript + Vite로 제작된 웹 기반 인생 시뮬레이션 게임입니다.
 

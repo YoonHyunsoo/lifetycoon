@@ -1,10 +1,13 @@
 import React from 'react';
 import Modal from '../ui/4.1_Modal';
 import PixelButton from '../ui/8.2_PixelButton';
+import { AdManager } from '../../../lib/adSystem';
 
 interface Choice {
     label: string;
     action: () => void;
+    isAd?: boolean;
+    adRewardType?: string;
 }
 
 interface EventPopupProps {
@@ -46,10 +49,19 @@ const EventPopup: React.FC<EventPopupProps> = ({
                     {choices && choices.length > 0 ? (
                         choices.map((choice, idx) => (
                             <PixelButton key={idx} onClick={() => {
-                                choice.action();
-                                onClose();
-                            }} size="sm">
-                                {choice.label}
+                                if (choice.isAd) {
+                                    // Default to DOUBLE_REWARD if not specified
+                                    const rType = choice.adRewardType || 'DOUBLE_REWARD';
+                                    AdManager.showRewardedAd({ rewardType: rType as any }, () => {
+                                        choice.action();
+                                        onClose();
+                                    });
+                                } else {
+                                    choice.action();
+                                    onClose();
+                                }
+                            }} size="sm" className={choice.isAd ? "border-purple-500 animate-pulse text-purple-200" : ""}>
+                                {choice.isAd ? `📺 ${choice.label}` : choice.label}
                             </PixelButton>
                         ))
                     ) : (

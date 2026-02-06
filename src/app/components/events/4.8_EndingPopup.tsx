@@ -5,6 +5,9 @@ import PixelCard from '../ui/8.1_PixelCard';
 import { saveScore } from '../../../lib/saveSystem';
 import { useAuthStore } from '../../../store/authStore';
 import { submitGlobalScore } from '../../../lib/leaderboard';
+import { AdManager } from '../../../lib/adSystem';
+import { useGameStore } from '../../../store/gameStore';
+import { useEventStore } from '../../../store/eventStore';
 
 interface EndingPopupProps {
     isOpen: boolean;
@@ -18,6 +21,8 @@ interface EndingPopupProps {
 const EndingPopup: React.FC<EndingPopupProps> = ({ isOpen, type, totalAssets, age, jobTitle, onRestart }) => {
     const { user, profile } = useAuthStore();
     const [submitted, setSubmitted] = React.useState(false);
+    const { player, revivePlayer } = useGameStore();
+    const { dismissEvent } = useEventStore.getState();
 
     // Save Score (Local) on Open
     React.useEffect(() => {
@@ -31,6 +36,13 @@ const EndingPopup: React.FC<EndingPopupProps> = ({ isOpen, type, totalAssets, ag
         if (!user || !profile) return;
         const success = await submitGlobalScore(profile.username || 'Tycoon', totalAssets);
         if (success) setSubmitted(true);
+    };
+
+    const handleRevive = () => {
+        AdManager.showRewardedAd({ rewardType: 'REVIVE' }, () => {
+            revivePlayer();
+            dismissEvent();
+        });
     };
 
     let title = "";
@@ -108,7 +120,14 @@ const EndingPopup: React.FC<EndingPopupProps> = ({ isOpen, type, totalAssets, ag
                     </div>
                 )}
 
-                <div className="flex justify-center mt-2">
+                <div className="flex flex-col gap-3 mt-2">
+                    {/* [MONETIZATION] Revive Button */}
+                    {!player.hasRevived && (type === 'bankruptcy' || type === 'overwork') && (
+                        <PixelButton onClick={handleRevive} className="bg-purple-600 hover:bg-purple-500 border-purple-400 text-white animate-pulse">
+                            📺 REVIVE (Second Chance)
+                        </PixelButton>
+                    )}
+
                     <PixelButton onClick={onRestart} variant="primary">
                         RETURN TO TITLE
                     </PixelButton>

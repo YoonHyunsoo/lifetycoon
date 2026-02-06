@@ -147,9 +147,27 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
     if (!isStudent && r < luckChance) {
         return {
             id: `lucky-${Date.now()}`,
-            type: 'notification',
+            type: 'choice',
             title: 'LUCKY DAY!',
-            description: 'You found a wallet on the street... and returned it to the owner.\nThey gave you a reward! (Cash +500,000, Reputation +5)',
+            description: 'You found a wallet on the street...\nDo you want to return it?',
+            choices: [
+                {
+                    label: 'Return it (+500k)',
+                    action: (s: GameState) => ({
+                        player: { ...s.player, cash: s.player.cash + 500000, reputation: s.player.reputation + 5 },
+                        feedback: { id: Date.now(), text: "Good Karma! +500k", color: "text-green-400" }
+                    })
+                },
+                {
+                    label: 'Look for Owner (Double Reward)',
+                    isAd: true,
+                    adRewardType: 'DOUBLE_REWARD',
+                    action: (s: GameState) => ({
+                        player: { ...s.player, cash: s.player.cash + 1000000, reputation: s.player.reputation + 10 },
+                        feedback: { id: Date.now(), text: "Generous Reward! +1M", color: "text-yellow-400 font-bold" }
+                    })
+                }
+            ]
         };
     }
 

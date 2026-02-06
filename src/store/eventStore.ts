@@ -10,6 +10,8 @@ export interface GameEvent {
     choices?: {
         label: string;
         action: any; // Function or identifier
+        isAd?: boolean; // [MONETIZATION]
+        adRewardType?: string;
     }[];
     data?: any; // For custom rewards, choices, etc.
 }
