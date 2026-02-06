@@ -328,7 +328,7 @@ const FRIEND_POOL: FriendArchetype[] = [
     { id: 'childhood_gf', rank: 'D', type: 'girlfriend', name: 'Childhood GF', desc: 'Stress -5/wk, Max Power -10', modifiers: { maxPower: -10 } },
 ];
 
-const getWeightedRandomFriend = (currentFriends: string[], friendHistory: string[]): FriendArchetype | null => {
+const getWeightedRandomFriend = (currentFriends: string[]): FriendArchetype | null => {
     // 0. Check GF Limit
     const hasGirlfriend = currentFriends.some(fid => FRIEND_POOL.find(p => p.id === fid)?.type === 'girlfriend');
 
@@ -375,7 +375,7 @@ export const checkFriendEvents = (state: any): GameEvent | null => {
 
     if (!isGuaranteed && !isRandom) return null;
 
-    const candidate = getWeightedRandomFriend(player.friends, player.friendHistory);
+    const candidate = getWeightedRandomFriend(player.friends);
     if (!candidate) return null;
 
     const currentFriends = player.friends;

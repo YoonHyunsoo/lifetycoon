@@ -20,52 +20,49 @@ const CareerPathPopup: React.FC<CareerPathPopupProps> = ({ isOpen, onSelect, onC
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="CHOOSE YOUR PATH">
+        <Modal isOpen={isOpen} onClose={onClose} title="CHOOSE YOUR PATH (Age 20)">
             <div className="flex flex-col gap-3">
                 <p className="text-xs text-gray-400 text-center mb-2">
-                    New year has come. Select your path for this year.
+                    You are now an adult. Choose how you will start your 20s.
                 </p>
 
-                <div
-                    onClick={() => handleSelect('job')}
-                    className="cursor-pointer group"
-                >
+                {/* Job Path */}
+                <div onClick={() => handleSelect('job')} className="cursor-pointer group">
                     <PixelCard className="hover:border-yellow-400 transition-colors bg-gray-900 group-hover:bg-gray-800">
                         <div className="flex items-center gap-3">
-                            <span className="text-2xl">💼</span>
-                            <div className="text-left">
-                                <div className="text-sm font-bold text-white">Employment</div>
-                                <div className="text-xxs text-gray-500">Apply for companies</div>
+                            <span className="text-3xl">💼</span>
+                            <div className="text-left flex-1">
+                                <div className="text-sm font-bold text-white group-hover:text-yellow-400">Employment</div>
+                                <div className="text-xxs text-gray-400">Start earning immediately.</div>
+                                <div className="text-xxs text-yellow-600 mt-1">Starting Rank based on stats.</div>
                             </div>
                         </div>
                     </PixelCard>
                 </div>
 
-                <div
-                    onClick={() => handleSelect('college')}
-                    className="cursor-pointer group"
-                >
+                {/* College Path */}
+                <div onClick={() => handleSelect('college')} className="cursor-pointer group">
                     <PixelCard className="hover:border-green-400 transition-colors bg-gray-900 group-hover:bg-gray-800">
                         <div className="flex items-center gap-3">
-                            <span className="text-2xl">🎓</span>
-                            <div className="text-left">
-                                <div className="text-sm font-bold text-white">College</div>
-                                <div className="text-xxs text-gray-500">2 Years, Debt -50m</div>
+                            <span className="text-3xl">🎓</span>
+                            <div className="text-left flex-1">
+                                <div className="text-sm font-bold text-white group-hover:text-green-400">College</div>
+                                <div className="text-xxs text-gray-400">4 Years of study. Degree = Higher Job Ceiling.</div>
+                                <div className="text-xxs text-red-500 mt-1">Cost: 50,000,000 ₩ (Debt)</div>
                             </div>
                         </div>
                     </PixelCard>
                 </div>
 
-                <div
-                    onClick={() => handleSelect('cert')}
-                    className="cursor-pointer group"
-                >
+                {/* Certification Path */}
+                <div onClick={() => handleSelect('cert')} className="cursor-pointer group">
                     <PixelCard className="hover:border-blue-400 transition-colors bg-gray-900 group-hover:bg-gray-800">
                         <div className="flex items-center gap-3">
-                            <span className="text-2xl">✏️</span>
-                            <div className="text-left">
-                                <div className="text-sm font-bold text-white">Certification</div>
-                                <div className="text-xxs text-gray-500">Gap year for specs</div>
+                            <span className="text-3xl">✏️</span>
+                            <div className="text-left flex-1">
+                                <div className="text-sm font-bold text-white group-hover:text-blue-400">Gap Year / Certs</div>
+                                <div className="text-xxs text-gray-400">Build specs to apply for better jobs later.</div>
+                                <div className="text-xxs text-blue-500 mt-1">Freedom to work part-time.</div>
                             </div>
                         </div>
                     </PixelCard>

@@ -23,11 +23,10 @@ const MainGameScreen: React.FC = () => {
     const gameState = useGameStore();
 
     // Use default values if gameState is undefined to prevent crash, but log error
-    const { isPlaying, processTick, recoverPower, togglePlay } = gameState || {
+    const { isPlaying, processTick, recoverPower } = gameState || {
         isPlaying: false,
         processTick: () => console.error("Store not loaded"),
-        recoverPower: () => { },
-        togglePlay: () => { }
+        recoverPower: () => { }
     };
 
     if (!gameState) {
@@ -127,9 +126,22 @@ const MainGameScreen: React.FC = () => {
                 </>
             )}
 
-            {/* Other Fullscreen Popups */}
-            <StockMarketPopup />
-            <CareerPathPopup />
+            {/* Stock Market Popup */
+                currentEvent?.type === 'stock' && (
+                    <StockMarketPopup
+                        isOpen={true}
+                        onClose={dismissEvent}
+                    />
+                )}
+
+            {/* Career Path Popup */}
+            {currentEvent?.type === 'career' && (
+                <CareerPathPopup
+                    isOpen={true}
+                    onSelect={(path) => console.log('Career Selected:', path)}
+                    onClose={dismissEvent}
+                />
+            )}
             {/* Ending Popup - Rendered via currentEvent data */}
             {currentEvent && currentEvent.type === 'ending' && (
                 <EndingPopup

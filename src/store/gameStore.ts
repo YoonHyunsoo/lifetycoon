@@ -2,12 +2,12 @@ import { create } from 'zustand';
 import { getActionCost } from '../lib/gameLogic';
 import { useEventStore } from './eventStore';
 import type { GameEvent } from './eventStore';
-import type { Stock } from '../lib/stockLogic';
+// import type { Stock } from '../lib/stockLogic';
 import { INITIAL_STOCKS, updateStockPrices } from '../lib/stockLogic';
 // import { saveGame } from '../lib/saveSystem';
 import { getMonthlyExpenses, checkPromotion } from '../lib/jobLogic';
 import { checkRandomEvents, checkExamEvents, checkFriendEvents } from '../lib/eventLogic';
-import type { GameState, PlayerState, InitialStats } from '../types/gameTypes';
+import type { GameState } from '../types/gameTypes';
 
 console.log('Loading gameStore.ts...'); // DEBUG
 
@@ -81,22 +81,44 @@ export const useGameStore = create<GameState>((set, get) => {
         setCareer: (path: 'job' | 'college' | 'cert') => set((state) => {
             let newJobTitle = state.player.jobTitle;
             let isStudent = false;
+            let cashUpdate = state.player.cash;
+            // let debtUpdate = ... (If we tracked debt separately, but we can just deduct or track in a variable) 
+            // Current simplified debt: Just a negative cash event or separate var? 
+            // Docs say "Debt -50m". Let's deduct 50m cash? Or track 'debt'?
+            // Let's just deduct cash for simplicity as "Tuition Loan" (negative cash is allowed?)
+            // Or better, set 'debt'. But player struct doesn't have debt.
+            // Let's just assume negative cash for now or just log it. 
+            // The prompt says "Debt -50m". Let's remove 50m from cash.
 
             if (path === 'college') {
                 newJobTitle = 'College Student';
-                isStudent = true;
-                // Debt logic?
+                isStudent = true; // College is still student-like
+                // Tuition
+                cashUpdate -= 50000000;
             } else if (path === 'cert') {
                 newJobTitle = 'Job Seeker';
                 isStudent = false;
             } else if (path === 'job') {
-                // Simplified: Start as Intern if stats enough, else Part-timer
-                newJobTitle = 'Intern (B-Corp)';
+                // Determine Job based on Stats
+                // Check Elite -> Regular -> Intern -> Part-timer
+                const { intelligence, sense } = state.player;
+
+                if (intelligence >= 70 && sense >= 60) newJobTitle = 'Elite (S-Corp)';
+                else if (intelligence >= 40 && sense >= 40) newJobTitle = 'Employee (A-Corp)';
+                else if (intelligence >= 20 && sense >= 20) newJobTitle = 'Intern (B-Corp)';
+                else newJobTitle = 'Part-timer (C-Corp)';
+
                 isStudent = false;
             }
 
             return {
-                player: { ...state.player, jobTitle: newJobTitle, isStudent }
+                player: {
+                    ...state.player,
+                    jobTitle: newJobTitle,
+                    isStudent,
+                    cash: cashUpdate
+                },
+                feedback: { id: Date.now(), text: `Path Chosen: ${newJobTitle}`, color: "text-yellow-400" }
             };
         }),
 
@@ -357,7 +379,6 @@ export const useGameStore = create<GameState>((set, get) => {
                 case 'club': // UI: Play
                     newPlayer.sense += 2;
                     newPlayer.intelligence = Math.max(0, newPlayer.intelligence - 1); // Int Penalty
-                    // No stress change
                     fbText = "+2 Sense, -1 Int";
                     fbColor = "text-purple-400";
                     set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "🎮" } });
@@ -367,6 +388,64 @@ export const useGameStore = create<GameState>((set, get) => {
                     fbText = "Stress -10";
                     fbColor = "text-yellow-400";
                     set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "💤" } });
+                    break;
+
+                // --- JOB ACTIONS ---
+                case 'work': // Work/Intern
+                    newPlayer.reputation += 2;
+                    newPlayer.stress += 4;
+                    fbText = "+2 Rep, +4 Stress";
+                    fbColor = "text-blue-300";
+                    set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "💼" } });
+                    break;
+                case 'overtime': // Hard Work
+                    newPlayer.reputation += 4;
+                    newPlayer.stress += 8;
+                    // Note: Money is monthly, but maybe small bonus? No, keep it monthly for now.
+                    fbText = "+4 Rep, +8 Stress";
+                    fbColor = "text-red-400";
+                    set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "🔥" } });
+                    break;
+                case 'politics':
+                    newPlayer.sense += 2;
+                    newPlayer.reputation += 1;
+                    newPlayer.stress += 3;
+                    fbText = "+2 Sense, +1 Rep";
+                    fbColor = "text-purple-300";
+                    set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "🤝" } });
+                    break;
+
+                // --- COLLEGE ACTIONS ---
+                case 'major_study':
+                    newPlayer.intelligence += 4; // Better than normal study
+                    newPlayer.stress += 4;
+                    fbText = "+4 Int, +4 Stress";
+                    fbColor = "text-blue-500";
+                    set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "🎓" } });
+                    break;
+                case 'part_time':
+                    newPlayer.cash += 300000; // Instant Cash for part time
+                    newPlayer.stress += 5;
+                    fbText = "+300k Cash, +5 Stress";
+                    fbColor = "text-green-500";
+                    set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "💵" } });
+                    break;
+
+                // --- JOB SEEKER ACTIONS ---
+                case 'cert_study':
+                    newPlayer.intelligence += 2;
+                    newPlayer.reputation += 1; // Specs increase rep/hireability
+                    newPlayer.stress += 5;
+                    fbText = "+2 Int, +1 Rep (Spec)";
+                    fbColor = "text-blue-400";
+                    set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "✏️" } });
+                    break;
+                case 'cv':
+                    newPlayer.sense += 3;
+                    newPlayer.stress += 2;
+                    fbText = "+3 Sense (CV)";
+                    fbColor = "text-purple-400";
+                    set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "📝" } });
                     break;
             }
 

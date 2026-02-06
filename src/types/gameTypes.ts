@@ -83,9 +83,7 @@ export interface GameState {
     // Actions
     initializeGame: (name: string, stats: InitialStats) => void;
     advanceWeek: () => void;
-    performAction: (actionType: string) => void;
-
-    // Stock Actions
+    performAction: (action: 'study' | 'exercise' | 'club' | 'rest' | 'work' | 'overtime' | 'politics' | 'major_study' | 'part_time' | 'cert_study' | 'cv') => void;
     buyStock: (id: number, amount: number) => void;
     sellStock: (id: number, amount: number) => void;
 

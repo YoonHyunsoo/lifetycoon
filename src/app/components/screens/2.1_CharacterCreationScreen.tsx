@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PixelButton from '../ui/8.2_PixelButton';
-import PixelCard from '../ui/8.1_PixelCard';
+// import PixelCard from '../ui/8.1_PixelCard';
 import PixelInput from '../ui/2.2_PixelInput';
 import DiceRoller from '../character/2.3_DiceRoller';
 import StatDistribution from '../character/2.4_StatDistribution';
