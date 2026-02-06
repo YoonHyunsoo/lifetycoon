@@ -92,11 +92,12 @@ const MainGameScreen: React.FC = () => {
             {/* Global Overlay: Event System */}
             {currentEvent && (
                 <>
-                    {/* Handle Normal, Choice, and Quest types with generic EventPopup */}
-                    {['notification', 'choice', 'quest', 'normal', 'tutorial'].includes(currentEvent.type) && (
+                    {/* Handle Normal, Choice, Quest, and Date types with generic EventPopup */}
+                    {['notification', 'choice', 'quest', 'normal', 'tutorial', 'date'].includes(currentEvent.type) && (
                         <EventPopup
                             isOpen={true}
                             onClose={dismissEvent}
+                            type={currentEvent.type} // Pass type for styling
                             title={currentEvent.title}
                             description={currentEvent.description || ''}
                             choices={currentEvent.choices ? currentEvent.choices.map(c => ({

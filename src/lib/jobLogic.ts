@@ -78,3 +78,34 @@ export const checkPromotion = (currentTitle: string, userRep: number, userSen: n
 
     return null;
 };
+
+// [NEW] Firing Logic
+export const checkFiring = (jobTitle: string, reputation: number, stress: number, randomVal: number): string | null => {
+    // 1. Stress Burnout Firing (If stress > 45, chance to be fired for negligence)
+    if (stress >= 45 && randomVal < 5) return "Burnout";
+
+    // 2. Low Reputation Firing (If Rep < 10 after year 1, usually fired)
+    // We assume this is called annually or monthly. Let's make it monthly low chance.
+    if (reputation < 5 && randomVal < 2) return "Incompetence";
+
+    // 3. Company Bankruptcy (C-Rank only)
+    if (jobTitle.includes('Part-timer') || jobTitle.includes('C-Corp')) {
+        if (randomVal < 0.5) return "Company Bankruptcy"; // 0.5% chance per month
+    }
+
+    return null;
+};
+
+// [NEW] Company Bonus Event
+export const checkCompanyEvent = (jobTitle: string, randomVal: number): { type: 'bonus' | 'crisis', value: number } | null => {
+    // S-Rank / Elite: High Bonus Chance
+    if (jobTitle.includes('Elite') || jobTitle.includes('S-Corp')) {
+        if (randomVal < 5) return { type: 'bonus', value: 5000000 }; // 5m Bonus
+    }
+    // A-Rank / Regular
+    else if (jobTitle.includes('Employee') || jobTitle.includes('A-Corp')) {
+        if (randomVal < 3) return { type: 'bonus', value: 2000000 };
+    }
+
+    return null;
+};

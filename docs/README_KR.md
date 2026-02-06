@@ -21,7 +21,7 @@ React + TypeScript + Vite로 제작된 웹 기반 인생 시뮬레이션 게임�
 - `src/`: 소스 코드 (컴포넌트, 로직)
 - `docs/`: 프로젝트 문서 (기획, 로그, 가이드)
   - `docs/00_Documentation_Guide.md`: 문서 작성 가이드
-  - `docs/04_Dev_Log_and_Plan.md`: 개발 로그 및 일정
+  - `docs/04_Dev_Log_and_Plan.md`: 개발 로그 및 일정 (Updated: Phase 2 Completed)
 
 ## 🚀 시작하기
 1. 프로젝트 폴더 열기

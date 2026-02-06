@@ -5,8 +5,8 @@ import type { GameEvent } from './eventStore';
 // import type { Stock } from '../lib/stockLogic';
 import { INITIAL_STOCKS, updateStockPrices } from '../lib/stockLogic';
 // import { saveGame } from '../lib/saveSystem';
-import { getMonthlyExpenses, checkPromotion } from '../lib/jobLogic';
-import { checkRandomEvents, checkExamEvents, checkFriendEvents } from '../lib/eventLogic';
+import { getMonthlyExpenses, checkPromotion, checkFiring, checkCompanyEvent } from '../lib/jobLogic';
+import { checkRandomEvents, checkExamEvents, checkFriendEvents, checkDatingEvent, checkExpandedRandomEvents } from '../lib/eventLogic';
 import type { GameState } from '../types/gameTypes';
 
 console.log('Loading gameStore.ts...'); // DEBUG
@@ -147,6 +147,35 @@ export const useGameStore = create<GameState>((set, get) => {
                     // Expenses
                     monthlyExpense = getMonthlyExpenses(state.player.age, state.player.reputation, false) + (state.player.children * 1000000); // Child Expense
 
+                    // [JOB LOGIC] Firing & Bonuses (Monthly)
+                    if (!state.player.isStudent && state.player.jobTitle !== 'Job Seeker') {
+                        // 1. Firing Check
+                        const firedReason = checkFiring(state.player.jobTitle, state.player.reputation, state.player.stress, Math.random() * 100);
+                        if (firedReason) {
+                            triggerEvent({
+                                id: `fired-${newYear}-${newMonth}`,
+                                type: 'notification',
+                                title: "YOU ARE FIRED!",
+                                description: `Reason: ${firedReason}\nYou are now a Job Seeker.`,
+                            });
+                            // Handle Firing State Change immediately (hacky but works)
+                            // Ideally choice action does it, but notification is easier
+                            state.player.jobTitle = 'Job Seeker';
+                        }
+
+                        // 2. Bonus Check
+                        const companyEvt = checkCompanyEvent(state.player.jobTitle, Math.random() * 100);
+                        if (companyEvt && companyEvt.type === 'bonus') {
+                            triggerEvent({
+                                id: `bonus-${newYear}-${newMonth}`,
+                                type: 'notification',
+                                title: "COMPANY BONUS",
+                                description: `Performance Bonus Received!\n+${companyEvt.value.toLocaleString()} ₩`,
+                            });
+                            monthlyIncome += companyEvt.value; // Add to this month's income
+                        }
+                    }
+
                     // Income (Simplified)
                     if (!state.player.isStudent && state.player.jobTitle.includes('Intern')) monthlyIncome = 2000000;
                     if (!state.player.isStudent && state.player.jobTitle.includes('Part-timer')) monthlyIncome = 1500000;
@@ -234,6 +263,16 @@ export const useGameStore = create<GameState>((set, get) => {
 
             if (randomEvent) {
                 triggerEvent(randomEvent as GameEvent);
+            }
+
+            // [NEW] Expanded Random Events
+            const expandedEvt = checkExpandedRandomEvents({ player: { ...state.player } });
+            if (expandedEvt) triggerEvent(expandedEvt as GameEvent);
+
+            // [NEW] Dating Logic
+            if (!state.player.isStudent) {
+                const datingEvt = checkDatingEvent({ player: { ...state.player } });
+                if (datingEvt) triggerEvent(datingEvt as GameEvent);
             }
 
             // [Student Exam Check]

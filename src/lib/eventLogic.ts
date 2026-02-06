@@ -1,15 +1,7 @@
 import type { GameState } from '../types/gameTypes';
+import type { GameEvent } from '../store/eventStore'; // [FIX] Use shared type
 
-export interface GameEvent {
-    id: string;
-    type: 'notification' | 'choice' | 'quest';
-    title: string;
-    description: string;
-    choices?: {
-        label: string;
-        action: (state: GameState) => Partial<GameState>; // Return state updates
-    }[];
-}
+// Removed local interface GameEvent
 
 export const checkRandomEvents = (state: any): GameEvent | null => {
     const { stress, luck, age, isStudent, spouse, children, cash, intelligence, jobTitle } = state.player;
@@ -28,7 +20,7 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
             choices: [
                 {
                     label: 'Invest & Found (Cost: 50m)',
-                    action: (s) => ({
+                    action: (s: GameState) => ({
                         player: {
                             ...s.player,
                             cash: s.player.cash - 50000000,
@@ -41,7 +33,7 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
                 },
                 {
                     label: 'Decline',
-                    action: (_s) => ({})
+                    action: (_s: GameState) => ({})
                 }
             ]
         };
@@ -67,7 +59,7 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
             choices: [
                 {
                     label: 'Propose!',
-                    action: (s) => {
+                    action: (s: GameState) => {
                         if (s.player.cash < partner.cost) {
                             return { feedback: { id: Date.now(), text: "Not enough money!", color: "text-red-500" } };
                         }
@@ -85,7 +77,7 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
                 },
                 {
                     label: 'Not now',
-                    action: (s) => ({
+                    action: (s: GameState) => ({
                         player: { ...s.player, stress: s.player.stress + 5 }, // Breakup stress
                         feedback: { id: Date.now(), text: "Stayed Single.", color: "text-gray-400" }
                     })
@@ -118,7 +110,7 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
             description: `Congratulations! You had a beautiful baby.\n(Max Power +10, Monthly Expense +1M)`,
             choices: [{
                 label: 'Wonderful!',
-                action: (s) => ({
+                action: (s: GameState) => ({
                     maxPower: s.maxPower + 10,
                     player: {
                         ...s.player,
@@ -176,11 +168,148 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
             choices: [
                 {
                     label: 'Ask for Allowance',
-                    action: (s) => ({ player: { ...s.player, cash: s.player.cash + 500000, reputation: s.player.reputation - 2 } })
+                    action: (s: GameState) => ({ player: { ...s.player, cash: s.player.cash + 500000, reputation: s.player.reputation - 2 } })
                 },
                 {
                     label: 'Give Gift',
-                    action: (s) => ({ player: { ...s.player, cash: s.player.cash - 200000, reputation: s.player.reputation + 5, stress: Math.max(0, s.player.stress - 5) } })
+                    action: (s: GameState) => ({ player: { ...s.player, cash: s.player.cash - 200000, reputation: s.player.reputation + 5, stress: Math.max(0, s.player.stress - 5) } })
+                }
+            ]
+        };
+    }
+
+    return null;
+};
+
+// [NEW] Dating Logic
+export const checkDatingEvent = (state: any): GameEvent | null => {
+    const { player } = state;
+    // Check if player has a GF in friends list
+    // GF IDs from FRIEND_POOL: 'idol_gf', 'model_gf', 'popular_gf', 'cute_gf', 'childhood_gf'
+    const gfId = player.friends.find((f: string) => f.includes('gf'));
+
+    if (!gfId) return null;
+
+    const r = Math.random() * 100;
+    // 5% chance per week for a dating event if you have a GF (Reduced from 10%)
+    if (r > 5) return null;
+
+    // Event Pool
+    const events = [
+        {
+            title: "Romantic Dinner",
+            desc: "Your girlfriend wants to go to a fancy restaurant.",
+            cost: 200000,
+            stress: -10,
+            rep: 0
+        },
+        {
+            title: "Anniversary",
+            desc: "It's your 100-day anniversary! Buy a gift?",
+            cost: 500000,
+            stress: -5,
+            rep: 2
+        },
+        {
+            title: "Travel Request",
+            desc: "She wants to go on a weekend trip.",
+            cost: 1000000,
+            stress: -20,
+            rep: 0
+        }
+    ];
+
+    const evt = events[Math.floor(Math.random() * events.length)];
+
+    return {
+        id: `date-${Date.now()}`,
+        type: 'date', // [NEW] Use specific type for Pink UI
+        title: evt.title,
+        description: `${evt.desc}\n(Cost: ${evt.cost.toLocaleString()} ₩)`,
+        choices: [
+            {
+                label: "Accept (Love)",
+                action: (s: GameState) => {
+                    if (s.player.cash < evt.cost) return { feedback: { id: Date.now(), text: "Too poor...", color: "text-red-500" } };
+                    return {
+                        player: {
+                            ...s.player,
+                            cash: s.player.cash - evt.cost,
+                            stress: Math.max(0, s.player.stress + evt.stress), // stress is negative here, so it reduces
+                            reputation: s.player.reputation + evt.rep
+                        },
+                        feedback: { id: Date.now(), text: "Relationship Deepened!", color: "text-pink-500" }
+                    };
+                }
+            },
+            {
+                label: "Reject (Fight)",
+                action: (s: GameState) => ({
+                    player: { ...s.player, stress: s.player.stress + 5 },
+                    feedback: { id: Date.now(), text: "She is angry...", color: "text-red-500" }
+                })
+            }
+        ]
+    };
+};
+
+export const checkExpandedRandomEvents = (state: any): GameEvent | null => {
+    const { player } = state;
+    const r = Math.random() * 100;
+
+    // 1. Economic - Crypto Boom (Rare: 0.5% - Reduced)
+    if (r < 0.5 && !player.isStudent) {
+        return {
+            id: `crypto-${Date.now()}`,
+            type: 'choice',
+            title: "Crypto Boom!",
+            description: "Your tech friend tips you off on a coin.",
+            choices: [
+                {
+                    label: "Invest 1M (High Risk)",
+                    action: (s: GameState) => {
+                        if (s.player.cash < 1000000) return {};
+                        const win = Math.random() > 0.5;
+                        return {
+                            player: { ...s.player, cash: s.player.cash + (win ? 5000000 : -1000000) },
+                            feedback: { id: Date.now(), text: win ? "To the Moon! (+5M)" : "Rug Pull... (-1M)", color: win ? "text-green-500" : "text-red-500" }
+                        };
+                    }
+                },
+                { label: "Ignore", action: () => ({}) }
+            ]
+        };
+    }
+
+    // 2. Career - Bad Boss (Common: 2% if Employed - Reduced from 5%)
+    if (!player.isStudent && player.jobTitle !== 'Job Seeker' && r < 2) {
+        return {
+            id: `badboss-${Date.now()}`,
+            type: 'notification',
+            title: "Toxic Boss",
+            description: "Your boss blamed you for his mistake.\n(Stress +10)",
+            choices: [{
+                label: "Sigh...",
+                action: (s: GameState) => ({ player: { ...s.player, stress: s.player.stress + 10 } })
+            }]
+        };
+    }
+
+    // 3. Social - Wedding Invitation (1.5% - Reduced from 3%)
+    if (r < 1.5 && player.age > 25) {
+        return {
+            id: `wedding-${Date.now()}`,
+            type: 'choice',
+            title: "Wedding Invitation",
+            description: "A colleague is getting married.\nCongratulatory money required.",
+            choices: [
+                {
+                    label: "Pay 100k (Rep+1)",
+                    action: (s: GameState) => ({ player: { ...s.player, cash: s.player.cash - 100000, reputation: s.player.reputation + 1 } })
+                },
+                {
+                    label: "Skip (Rep-1)",
+                    action: (s: GameState) => ({ player: { ...s.player, reputation: s.player.reputation - 1 } })
                 }
             ]
         };

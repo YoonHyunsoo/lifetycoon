@@ -86,6 +86,27 @@ const DevControls: React.FC = () => {
                 <DevBtn label="Stock Crash" onClick={() => alert('TODO')} />
             </div>
 
+            {/* NEW EVENTS */}
+            <div className="flex gap-1 mt-1">
+                <button
+                    onClick={() => useEventStore.getState().triggerEvent({
+                        id: 'dev-fire', type: 'notification', title: "FIRED!", description: "Test Firing Event"
+                    })}
+                    className="p-1 bg-red-900 text-xs border border-red-500 rounded text-red-100 hover:bg-black w-1/2"
+                >
+                    Test Fire
+                </button>
+                <button
+                    onClick={() => useEventStore.getState().triggerEvent({
+                        id: 'dev-date', type: 'choice', title: "DATE NIGHT", description: "GF wants dinner (-100k)",
+                        choices: [{ label: "Go", action: (s: any) => ({ player: { ...s.player, cash: s.player.cash - 100000 }, feedback: { id: Date.now(), text: "Love++", color: "text-pink-500" } }) }]
+                    })}
+                    className="p-1 bg-pink-900 text-xs border border-pink-500 rounded text-pink-100 hover:bg-black w-1/2"
+                >
+                    Test Date
+                </button>
+            </div>
+
             <div className="flex gap-1 mt-1">
                 <input
                     className="bg-gray-800 text-white w-full px-1 border border-gray-600 rounded"

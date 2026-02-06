@@ -76,11 +76,12 @@ const CharacterCreationScreen: React.FC<CharacterCreationScreenProps> = ({ onCom
                 />
 
                 {/* 2. Stat Dice */}
-                <div className="flex gap-4 items-center justify-between bg-gray-800 p-3 border-2 border-gray-700">
-                    <div className="text-xs text-gray-400 w-1/2">
-                        Roll for <span className="text-blue-300">Int</span>, <span className="text-red-300">Sta</span>, <span className="text-purple-300">Sen</span>.
-                    </div>
-                    <DiceRoller onRoll={handleRoll} rolling={isRolling} />
+                <div className="flex flex-col gap-2">
+                    <DiceRoller
+                        onRoll={handleRoll}
+                        rolling={isRolling}
+                        currentStats={stats}
+                    />
                 </div>
 
                 {/* 3. Stat View (Luck Hidden) */}

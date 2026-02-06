@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type EventType = 'normal' | 'career' | 'stock' | 'quest' | 'result' | 'ending' | 'notification';
+export type EventType = 'normal' | 'career' | 'stock' | 'quest' | 'result' | 'ending' | 'notification' | 'choice' | 'date';
 
 export interface GameEvent {
     id: string;

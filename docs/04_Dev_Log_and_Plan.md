@@ -57,8 +57,9 @@
 ## 🚀 향후 개발 계획 (To-Do List)
 
 ### 🚨 긴급 수정 (Next Priority)
-- [ ] **배포 정상화 (Deployment Fix)** -> **(보류: 추후 진행)**
-    *   *User 요청에 따라 당분간 Localhost 개발에 집중.*
+- [x] **배포 정상화 (Deployment Fix)**: TypeScript 빌드 오류 전체 수정 완료 (`npm run build` 성공).
+    *   `eventLogic.ts`의 타입 정의 오류 해결.
+    *   이벤트 시스템의 확장성 확보 (Pink/Blue/Yellow 테마 적용).
 
 ---
 
@@ -69,12 +70,16 @@
 - **Phase 1: Localhost Activation**
   - [x] Fix TypeScript Build Errors (Clean `npm run build`)
   - [x] Enhance Character Creation (Dice Animation)
+    - 4 Dice Layout (Int, Sta, Sen, Luck)
+    - Comic Stat Descriptions added
+    - "God's Dice" Visuals implemented
 - **Phase 2: Core Gameplay Expansion**
-  - [x] **Job System**: Implemented Age 20 Transition, Dynamic Action Bar (Student/Job/Job Seeker modes), Career Path Popup.
+  - [x] **Job System**: Implemented Age 20 Transition, Dynamic Action Bar.
+  - [x] **Job Volatility**: Firing & Bonuses.
+  - [x] **Event Expansion**: Dating (Pink UI), Random Events (Crypto, Boss).
 
 ### 🚧 In Progress / Next Up
 - **Localization**: (Deferred)
-- **Content Expansion**: More events, specific job events.
 
 ### Step 2. UI/UX 및 연출 강화 (Polish) - "Wowed at first glance"
 *   **목표**: '글로벌 룰'의 Design Aesthetics 준수.
