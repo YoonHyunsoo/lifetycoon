@@ -5,7 +5,7 @@ interface StatDistributionProps {
     stats: {
         intelligence: number;
         stamina: number;
-        sense: number;
+        charm: number;
         luck: number;
     };
     hiddenLuck?: boolean;
@@ -14,7 +14,7 @@ interface StatDistributionProps {
 const DESCRIPTIONS = {
     intelligence: "Brain Power. Required for good jobs. Don't be a potato.",
     stamina: "Health Bar. If 0, you die (or pass out). Gym logic.",
-    sense: "Vibe check. Needed for dates & office politics.",
+    charm: "Social Vibe. Needed for dates, interviews & office politics.",
     luck: "RNG God's favor. You can't train this. Submit to fate."
 };
 
@@ -44,7 +44,7 @@ const StatDistribution: React.FC<StatDistributionProps> = ({ stats, hiddenLuck }
 
                             <div className="w-full bg-gray-700 h-1.5 mt-1 mb-2 rounded-full overflow-hidden">
                                 <div
-                                    className={`h-full ${key === 'stamina' ? 'bg-red-500' : key === 'sense' ? 'bg-purple-500' : 'bg-blue-500'}`}
+                                    className={`h-full ${key === 'stamina' ? 'bg-red-500' : key === 'charm' ? 'bg-pink-500' : 'bg-blue-500'}`}
                                     style={{ width: `${Math.min(100, (value / 20) * 100)}%` }} /* Visual scale for starting stats */
                                 />
                             </div>

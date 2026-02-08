@@ -15,14 +15,14 @@ const ActionBar: React.FC = () => {
         currentActions = [
             { id: 'study', label: 'Study', icon: '📖' },
             { id: 'exercise', label: 'Exercise', icon: '💪' },
-            { id: 'club', label: 'Play', icon: '🎮' },
+            { id: 'socialize', label: 'Socialize', icon: '🗣️' },
             { id: 'rest', label: 'Rest', icon: '💤' },
         ];
     } else if (player.isStudent && player.jobTitle === 'College Student') {
         currentActions = [
             { id: 'major_study', label: 'Major', icon: '🎓' }, // Better stats
             { id: 'part_time', label: 'Part-time', icon: '💵' }, // Convert power to cash
-            { id: 'club', label: 'Club', icon: '🍺' }, // Social
+            { id: 'socialize', label: 'Socialize', icon: '🍺' }, // Social
             { id: 'rest', label: 'Rest', icon: '💤' },
         ];
     } else if (player.jobTitle === 'Job Seeker') {
@@ -57,7 +57,7 @@ const ActionBar: React.FC = () => {
         }
 
         // [TUTORIAL CHECK] - Only for HS actions for now, or add more tutorials later
-        if (['study', 'exercise', 'club', 'rest'].includes(act) && !(player.tutorialFlags as any)?.[act]) {
+        if (['study', 'exercise', 'socialize', 'rest'].includes(act) && !(player.tutorialFlags as any)?.[act]) {
             // ... (Existing Tutorial Logic, keep simple)
             // For now, let's just trigger event if it is in the list.
             // If we add new tutorials for Job, we add them here.

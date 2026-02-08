@@ -6,7 +6,7 @@ import type { GameEvent } from './eventStore';
 import { INITIAL_STOCKS, updateStockPrices } from '../lib/stockLogic';
 // import { saveGame } from '../lib/saveSystem';
 import { getMonthlyExpenses, checkPromotion, checkFiring, checkCompanyEvent } from '../lib/jobLogic';
-import { checkRandomEvents, checkExamEvents, checkFriendEvents, checkDatingEvent, checkExpandedRandomEvents } from '../lib/eventLogic';
+import { checkRandomEvents, checkExamEvents, checkFriendEvents, checkDatingEvent, checkExpandedRandomEvents, checkSocializeEvent } from '../lib/eventLogic';
 import type { GameState } from '../types/gameTypes';
 
 /* EXTENDING GameState Locally if not in Types file yet, or just rely on module augmentation? 
@@ -28,10 +28,10 @@ export const useGameStore = create<GameState>((set, get) => {
             isStudent: true,
             intelligence: 5,
             stamina: 5,
-            sense: 5,
+            charm: 5,
             luck: 5,
             stress: 0,
-            reputation: 0,
+            // reputation: 0, // REMOVED
             cash: 0,
             stockValue: 0,
             bankruptcyCount: 0,
@@ -42,8 +42,8 @@ export const useGameStore = create<GameState>((set, get) => {
             spouse: null,
             children: 0,
             hasRevived: false, // [MONETIZATION]
-            tutorialFlags: { study: false, exercise: false, club: false, rest: false },
-            monthlyActionCounts: { study: 0, exercise: 0, club: 0, rest: 0 }
+            tutorialFlags: { study: false, exercise: false, socialize: false, rest: false },
+            monthlyActionCounts: { study: 0, exercise: 0, socialize: 0, rest: 0 }
         },
         time: { year: 2024, month: 3, week: 1 },
         power: 100,
@@ -67,9 +67,9 @@ export const useGameStore = create<GameState>((set, get) => {
                 stress: 0,
                 intelligence: stats[0],
                 stamina: stats[1],
-                sense: stats[2],
+                charm: stats[2],
                 luck: stats[3],
-                reputation: 0,
+                // reputation: 0, // REMOVED
                 stockValue: 0,
                 bankruptcyCount: 0,
                 friends: [],
@@ -79,8 +79,8 @@ export const useGameStore = create<GameState>((set, get) => {
                 spouse: null,
                 children: 0,
                 hasRevived: false, // [MONETIZATION]
-                tutorialFlags: { study: false, exercise: false, club: false, rest: false },
-                monthlyActionCounts: { study: 0, exercise: 0, club: 0, rest: 0 }
+                tutorialFlags: { study: false, exercise: false, socialize: false, rest: false },
+                monthlyActionCounts: { study: 0, exercise: 0, socialize: 0, rest: 0 }
             },
             time: { year: 2024, month: 3, week: 1 },
             stocks: INITIAL_STOCKS
@@ -109,11 +109,11 @@ export const useGameStore = create<GameState>((set, get) => {
             } else if (path === 'job') {
                 // Determine Job based on Stats
                 // Check Elite -> Regular -> Intern -> Part-timer
-                const { intelligence, sense } = state.player;
+                const { intelligence, charm } = state.player;
 
-                if (intelligence >= 70 && sense >= 60) newJobTitle = 'Elite (S-Corp)';
-                else if (intelligence >= 40 && sense >= 40) newJobTitle = 'Employee (A-Corp)';
-                else if (intelligence >= 20 && sense >= 20) newJobTitle = 'Intern (B-Corp)';
+                if (intelligence >= 70 && charm >= 60) newJobTitle = 'Elite (S-Corp)';
+                else if (intelligence >= 40 && charm >= 40) newJobTitle = 'Employee (A-Corp)';
+                else if (intelligence >= 20 && charm >= 20) newJobTitle = 'Intern (B-Corp)';
                 else newJobTitle = 'Part-timer (C-Corp)';
 
                 isStudent = false;
@@ -153,12 +153,12 @@ export const useGameStore = create<GameState>((set, get) => {
                 // Economy: Income & Expenses
                 if (state.player.age >= 20) {
                     // Expenses
-                    monthlyExpense = getMonthlyExpenses(state.player.age, state.player.reputation, false) + (state.player.children * 1000000); // Child Expense
+                    monthlyExpense = getMonthlyExpenses(state.player.age, false) + (state.player.children * 1000000); // Child Expense
 
                     // [JOB LOGIC] Firing & Bonuses (Monthly)
                     if (!state.player.isStudent && state.player.jobTitle !== 'Job Seeker') {
                         // 1. Firing Check
-                        const firedReason = checkFiring(state.player.jobTitle, state.player.reputation, state.player.stress, Math.random() * 100);
+                        const firedReason = checkFiring(state.player.jobTitle, state.player.stress, Math.random() * 100);
                         if (firedReason) {
                             triggerEvent({
                                 id: `fired-${newYear}-${newMonth}`,
@@ -224,8 +224,7 @@ export const useGameStore = create<GameState>((set, get) => {
                     if (!state.player.isStudent && state.player.jobTitle !== 'Job Seeker') {
                         promotedTitle = checkPromotion(
                             state.player.jobTitle,
-                            state.player.reputation,
-                            state.player.sense,
+                            state.player.charm,
                             state.player.intelligence
                         );
 
@@ -373,7 +372,7 @@ export const useGameStore = create<GameState>((set, get) => {
                     cash: finalCash,
                     bankruptcyCount: finalBankruptcyCount,
                     stockValue: prev.stocks.reduce((acc, stock) => acc + (stock.price * stock.owned), 0),
-                    monthlyActionCounts: shouldResetCounts ? { study: 0, exercise: 0, club: 0, rest: 0 } : prev.player.monthlyActionCounts
+                    monthlyActionCounts: shouldResetCounts ? { study: 0, exercise: 0, socialize: 0, rest: 0 } : prev.player.monthlyActionCounts
                 }
             }));
         },
@@ -424,12 +423,23 @@ export const useGameStore = create<GameState>((set, get) => {
                     fbColor = "text-green-400";
                     set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "💪" } });
                     break;
-                case 'club': // UI: Play
-                    newPlayer.sense += 2;
+                case 'socialize': // [REFACTOR] Club -> Socialize
+                    newPlayer.charm += 2;
                     newPlayer.intelligence = Math.max(0, newPlayer.intelligence - 1); // Int Penalty
-                    fbText = "+2 Sense, -1 Int";
-                    fbColor = "text-purple-400";
-                    set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "🎮" } });
+                    fbText = "+2 Charm, -1 Int";
+                    fbColor = "text-pink-400";
+                    set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "🗣️" } });
+
+                    // [NEW] Socialize Event (Quest/Info) - 10% Chance
+                    if (Math.random() < 0.1) {
+                        const socEvent = checkSocializeEvent(newPlayer); // We need to import this
+                        if (socEvent) {
+                            // Delay slightly so it appears after the feedback
+                            setTimeout(() => {
+                                useEventStore.getState().triggerEvent(socEvent);
+                            }, 500);
+                        }
+                    }
                     break;
                 case 'rest':
                     newPlayer.stress = Math.max(0, newPlayer.stress - 10);
@@ -440,25 +450,25 @@ export const useGameStore = create<GameState>((set, get) => {
 
                 // --- JOB ACTIONS ---
                 case 'work': // Work/Intern
-                    newPlayer.reputation += 2;
+                    // newPlayer.reputation += 2; // REMOVED
                     newPlayer.stress += 4;
-                    fbText = "+2 Rep, +4 Stress";
+                    fbText = "+4 Stress";
                     fbColor = "text-blue-300";
                     set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "💼" } });
                     break;
                 case 'overtime': // Hard Work
-                    newPlayer.reputation += 4;
+                    // newPlayer.reputation += 4; // REMOVED
                     newPlayer.stress += 8;
                     // Note: Money is monthly, but maybe small bonus? No, keep it monthly for now.
-                    fbText = "+4 Rep, +8 Stress";
+                    fbText = "+8 Stress";
                     fbColor = "text-red-400";
                     set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "🔥" } });
                     break;
                 case 'politics':
-                    newPlayer.sense += 2;
-                    newPlayer.reputation += 1;
+                    newPlayer.charm += 2;
+                    // newPlayer.reputation += 1; // REMOVED
                     newPlayer.stress += 3;
-                    fbText = "+2 Sense, +1 Rep";
+                    fbText = "+2 Charm";
                     fbColor = "text-purple-300";
                     set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "🤝" } });
                     break;
@@ -482,17 +492,17 @@ export const useGameStore = create<GameState>((set, get) => {
                 // --- JOB SEEKER ACTIONS ---
                 case 'cert_study':
                     newPlayer.intelligence += 2;
-                    newPlayer.reputation += 1; // Specs increase rep/hireability
+                    // newPlayer.reputation += 1; // REMOVED
                     newPlayer.stress += 5;
-                    fbText = "+2 Int, +1 Rep (Spec)";
+                    fbText = "+2 Int";
                     fbColor = "text-blue-400";
                     set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "✏️" } });
                     break;
                 case 'cv':
-                    newPlayer.sense += 3;
+                    newPlayer.charm += 3;
                     newPlayer.stress += 2;
-                    fbText = "+3 Sense (CV)";
-                    fbColor = "text-purple-400";
+                    fbText = "+3 Charm (CV)";
+                    fbColor = "text-pink-400";
                     set({ feedback: { id: Date.now(), text: fbText, color: fbColor, icon: "📝" } });
                     break;
             }

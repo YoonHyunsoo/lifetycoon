@@ -20,7 +20,9 @@ React + TypeScript + Vite로 제작된 웹 기반 인생 시뮬레이션 게임�
 
 ### A. Setup Steps
 1.  **GCP Console**: Create OAuth Client ID.
-    - Authorized Redirect URI: `https://ggrwhlautxsrglzyeyyo.supabase.co/auth/v1/callback`
+    - **Authorized Redirect URI**: `https://ggrwhlautxsrglzyeyyo.supabase.co/auth/v1/callback`
+    - **Client ID**: `501020288224-ooradis5r6gmnab804k6grot40e8hkvm.apps.googleusercontent.com`
+    - **Client Secret**: *(User to provide/store securely)*
 2.  **Supabase Dashboard**: Enable Google Provider.
     - Paste Client ID / Secret from GCP.
 3.  **Client Implementation**:

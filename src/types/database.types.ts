@@ -16,12 +16,12 @@ export type GameSave = {
     // Personal Stats
     intelligence: number;
     stamina: number;
-    sense: number;
+    charm: number;
     luck: number;
 
     // Status Stats
     stress: number;
-    reputation: number;
+    // reputation: number; // REMOVED
 
     // Assets
     cash: number;

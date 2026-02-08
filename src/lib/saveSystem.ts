@@ -74,10 +74,10 @@ export const saveGame = async (gameState: any, eventState: any, type: 'auto' | '
                         current_week: gameState.time.week,
                         intelligence: gameState.player.intelligence,
                         stamina: gameState.player.stamina,
-                        sense: gameState.player.sense,
+                        charm: gameState.player.charm,
                         luck: gameState.player.luck,
                         stress: gameState.player.stress,
-                        reputation: gameState.player.reputation,
+                        // reputation: gameState.player.reputation, // REMOVED
                         cash: gameState.player.cash,
                         stock_value: gameState.player.stockValue,
                         job_title: gameState.player.jobTitle,

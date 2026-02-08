@@ -20,7 +20,7 @@ const DevControls: React.FC = () => {
                 ...state.player,
                 intelligence: 999,
                 stamina: 999,
-                sense: 999,
+                charm: 999,
                 luck: 999
             }
         }));

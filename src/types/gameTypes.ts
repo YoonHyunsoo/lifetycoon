@@ -25,12 +25,12 @@ export interface PlayerState {
     // Stats
     intelligence: number;
     stamina: number;
-    sense: number;
+    charm: number; // [REFACTOR] Sense -> Charm
     luck: number;
 
     // Status
     stress: number;
-    reputation: number;
+    // reputation: number; // REMOVED
 
     // Assets
     cash: number;
@@ -52,13 +52,13 @@ export interface PlayerState {
     monthlyActionCounts: {
         study: number;
         exercise: number;
-        club: number;
+        socialize: number; // [REFACTOR] Club -> Socialize
         rest: number;
     };
     tutorialFlags: {
         study: boolean;
         exercise: boolean;
-        club: boolean;
+        socialize: boolean;
         rest: boolean;
     };
 }
@@ -71,7 +71,7 @@ export interface TimeState {
 }
 
 // Stats Input Type (for initialization)
-export type InitialStats = [number, number, number, number]; // Int, Sta, Sen, Luck
+export type InitialStats = [number, number, number, number]; // Int, Sta, Chm, Luck
 
 // Main Game State Interface
 export interface GameState {
@@ -90,7 +90,7 @@ export interface GameState {
     revivePlayer: () => void;
     getInsiderHint: () => void;
     advanceWeek: () => void;
-    performAction: (action: 'study' | 'exercise' | 'club' | 'rest' | 'work' | 'overtime' | 'politics' | 'major_study' | 'part_time' | 'cert_study' | 'cv') => void;
+    performAction: (action: 'study' | 'exercise' | 'socialize' | 'rest' | 'work' | 'overtime' | 'politics' | 'major_study' | 'part_time' | 'cert_study' | 'cv') => void;
     buyStock: (id: number, amount: number) => void;
     sellStock: (id: number, amount: number) => void;
 
@@ -108,5 +108,5 @@ export interface GameState {
     // Feedback
     feedback: { id: number; text: string; color: string; icon?: string } | null;
     clearFeedback: () => void;
-    setTutorialFlag: (action: 'study' | 'exercise' | 'club' | 'rest') => void;
+    setTutorialFlag: (action: 'study' | 'exercise' | 'socialize' | 'rest') => void;
 }

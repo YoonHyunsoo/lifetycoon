@@ -3,14 +3,14 @@ export interface Job {
     title: string;
     rank: 'C' | 'B' | 'A' | 'S'; // Company Rank
     baseSalary: number; // Monthly
-    minStats: { int: number; sen: number };
+    minStats: { int: number; chm: number };
 }
 
 export const JOBS: Job[] = [
-    { id: 'part_time', title: 'Part-timer', rank: 'C', baseSalary: 1500000, minStats: { int: 0, sen: 0 } },
-    { id: 'intern', title: 'Intern', rank: 'B', baseSalary: 2000000, minStats: { int: 20, sen: 20 } },
-    { id: 'regular', title: 'Employee', rank: 'A', baseSalary: 3000000, minStats: { int: 40, sen: 40 } },
-    { id: 'elite', title: 'Elite', rank: 'S', baseSalary: 5000000, minStats: { int: 70, sen: 60 } },
+    { id: 'part_time', title: 'Part-timer', rank: 'C', baseSalary: 1500000, minStats: { int: 0, chm: 0 } },
+    { id: 'intern', title: 'Intern', rank: 'B', baseSalary: 2000000, minStats: { int: 20, chm: 20 } },
+    { id: 'regular', title: 'Employee', rank: 'A', baseSalary: 3000000, minStats: { int: 40, chm: 40 } },
+    { id: 'elite', title: 'Elite', rank: 'S', baseSalary: 5000000, minStats: { int: 70, chm: 60 } },
 ];
 
 export const SALARY_TABLE = {
@@ -27,41 +27,39 @@ export const SALARY_TABLE = {
     'founder_unicorn': 1000000000 // Big payout
 };
 
-export const getMonthlyExpenses = (age: number, reputation: number, hasFamily: boolean) => {
+export const getMonthlyExpenses = (age: number, hasFamily: boolean) => {
     let base = 0;
     if (age >= 20) base = 1000000; // Basic living cost
 
-    // Grade Dignity Cost
-    let dignity = 0;
-    if (reputation > 80) dignity = 3000000;
-    else if (reputation > 50) dignity = 1000000;
-    else if (reputation > 30) dignity = 500000;
+    // Grade Dignity Cost - REMOVED (Simpler model)
+    // Previously based on Reputation. Now flat or based on spending?
+    // Let's keep it simple: Just Base + Family.
 
     // Family
     const family = hasFamily ? 2000000 : 0; // Cost of spouse + child care approx
 
-    return base + dignity + family;
+    return base + family;
 };
 
 export const PROMOTION_TABLE = [
-    { title: 'Intern', nextTitle: 'Regular', reqRep: 10, reqSen: 20, reqInt: 20 },
-    { title: 'Regular', nextTitle: 'Manager', reqRep: 30, reqSen: 40, reqInt: 40 },
-    { title: 'Manager', nextTitle: 'Director', reqRep: 60, reqSen: 60, reqInt: 60 },
-    { title: 'Director', nextTitle: 'VP', reqRep: 80, reqSen: 70, reqInt: 80 },
-    { title: 'VP', nextTitle: 'CEO', reqRep: 95, reqSen: 90, reqInt: 90 },
+    { title: 'Intern', nextTitle: 'Regular', reqChm: 20, reqInt: 20 },
+    { title: 'Regular', nextTitle: 'Manager', reqChm: 40, reqInt: 40 },
+    { title: 'Manager', nextTitle: 'Director', reqChm: 60, reqInt: 60 },
+    { title: 'Director', nextTitle: 'VP', reqChm: 70, reqInt: 80 },
+    { title: 'VP', nextTitle: 'CEO', reqChm: 90, reqInt: 90 },
 ];
 
 export const STARTUP_TABLE = [
-    { title: 'Founder (Seed)', nextTitle: 'Founder (Series A)', reqRep: 20, reqSen: 40, reqInt: 40, reqRes: 'Investment' },
-    { title: 'Founder (Series A)', nextTitle: 'Founder (Series B)', reqRep: 50, reqSen: 60, reqInt: 60, reqRes: 'Growth' },
-    { title: 'Founder (Series B)', nextTitle: 'Founder (Unicorn)', reqRep: 80, reqSen: 80, reqInt: 80, reqRes: 'IPO' },
+    { title: 'Founder (Seed)', nextTitle: 'Founder (Series A)', reqChm: 40, reqInt: 40, reqRes: 'Investment' },
+    { title: 'Founder (Series A)', nextTitle: 'Founder (Series B)', reqChm: 60, reqInt: 60, reqRes: 'Growth' },
+    { title: 'Founder (Series B)', nextTitle: 'Founder (Unicorn)', reqChm: 80, reqInt: 80, reqRes: 'IPO' },
 ];
 
-export const checkPromotion = (currentTitle: string, userRep: number, userSen: number, userInt: number) => {
+export const checkPromotion = (currentTitle: string, userChm: number, userInt: number) => {
     // Normal Corporate Route
     const corpEntry = PROMOTION_TABLE.find(p => currentTitle.includes(p.title));
     if (corpEntry) {
-        if (userRep >= corpEntry.reqRep && userSen >= corpEntry.reqSen && userInt >= corpEntry.reqInt) {
+        if (userChm >= corpEntry.reqChm && userInt >= corpEntry.reqInt) {
             return corpEntry.nextTitle;
         }
     }
@@ -71,7 +69,7 @@ export const checkPromotion = (currentTitle: string, userRep: number, userSen: n
     if (startupEntry) {
         // Startup runs on events usually, but we can allow auto-growth if stats are high enough
         // to represent "Meeting milestones"
-        if (userRep >= startupEntry.reqRep && userSen >= startupEntry.reqSen && userInt >= startupEntry.reqInt) {
+        if (userChm >= startupEntry.reqChm && userInt >= startupEntry.reqInt) {
             return startupEntry.nextTitle;
         }
     }
@@ -80,13 +78,11 @@ export const checkPromotion = (currentTitle: string, userRep: number, userSen: n
 };
 
 // [NEW] Firing Logic
-export const checkFiring = (jobTitle: string, reputation: number, stress: number, randomVal: number): string | null => {
+export const checkFiring = (jobTitle: string, stress: number, randomVal: number): string | null => {
     // 1. Stress Burnout Firing (If stress > 45, chance to be fired for negligence)
     if (stress >= 45 && randomVal < 5) return "Burnout";
 
-    // 2. Low Reputation Firing (If Rep < 10 after year 1, usually fired)
-    // We assume this is called annually or monthly. Let's make it monthly low chance.
-    if (reputation < 5 && randomVal < 2) return "Incompetence";
+    // 2. Low Reputation Firing - REMOVED
 
     // 3. Company Bankruptcy (C-Rank only)
     if (jobTitle.includes('Part-timer') || jobTitle.includes('C-Corp')) {

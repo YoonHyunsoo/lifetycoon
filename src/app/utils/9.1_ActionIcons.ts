@@ -2,7 +2,7 @@
 export const ActionIcons: Record<string, string> = {
     study: '📚',
     exercise: '🏃',
-    club: '🎸',
+    socialize: '🗣️',
     rest: '🛌',
     game: '🎮',
     work: '💼',

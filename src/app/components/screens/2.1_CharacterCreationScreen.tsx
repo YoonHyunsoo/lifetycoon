@@ -17,7 +17,7 @@ const CharacterCreationScreen: React.FC<CharacterCreationScreenProps> = ({ onCom
 
     // Combined State
     const [name, setName] = useState('');
-    const [stats, setStats] = useState({ intelligence: 5, stamina: 5, sense: 5, luck: 5 }); // Luck initial is dummy
+    const [stats, setStats] = useState({ intelligence: 5, stamina: 5, charm: 5, luck: 5 }); // Luck initial is dummy
     const [isRolling, setIsRolling] = useState(false);
 
     // Animation State
@@ -31,7 +31,7 @@ const CharacterCreationScreen: React.FC<CharacterCreationScreenProps> = ({ onCom
             setStats({
                 intelligence: Math.floor(Math.random() * 13) + 3, // 3~15
                 stamina: Math.floor(Math.random() * 13) + 3,
-                sense: Math.floor(Math.random() * 13) + 3,
+                charm: Math.floor(Math.random() * 13) + 3,
                 luck: 5, // Placeholder, hidden
             });
             setIsRolling(false);
@@ -56,7 +56,7 @@ const CharacterCreationScreen: React.FC<CharacterCreationScreenProps> = ({ onCom
 
             setTimeout(() => {
                 // Initialize & Start
-                initializeGame(name, [stats.intelligence, stats.stamina, stats.sense, finalLuck]);
+                initializeGame(name, [stats.intelligence, stats.stamina, stats.charm, finalLuck]);
                 onComplete();
             }, 1500); // Wait 1.5s to see result
         }, 2000); // 2s Rolling anticipation

@@ -33,7 +33,7 @@ const LogicTest = () => {
                     <div className="mt-2 text-sm text-gray-300">
                         <p>INT: {player.intelligence}</p>
                         <p>STM: {player.stamina}</p>
-                        <p>SNS: {player.sense}</p>
+                        <p>CHM: {player.charm}</p>
                         <p>LCK: {player.luck}</p>
                     </div>
                 </div>
@@ -43,8 +43,8 @@ const LogicTest = () => {
                         Stress: {player.stress} / {MAX_STRESS}
                         {player.stress >= MAX_STRESS && ' (GAME OVER)'}
                     </p>
-                    <p>Reputation: {player.reputation}</p>
                     <p>Power: {power} / 100</p>
+                    <p>Cash: {player.cash}</p>
                 </div>
             </div>
 
@@ -58,11 +58,11 @@ const LogicTest = () => {
                     <button onClick={() => performAction('exercise')} className="bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">
                         Exercise (Stm++, Stress--)
                     </button>
-                    <button onClick={() => performAction('club')} className="bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">
-                        Club (Sns++, Stress--)
+                    <button onClick={() => performAction('socialize')} className="bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">
+                        Socialize (Chm++, Stress--)
                     </button>
                     <button onClick={() => performAction('rest')} className="bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">
-                        Rest (Stress -5)
+                        Rest (Stress -10)
                     </button>
                 </div>
             </div>

@@ -88,7 +88,7 @@ const StatBox: React.FC<{ player: any }> = ({ player }) => {
   const descriptions: Record<string, string> = {
     INT: "Intelligence.\n[Exam Score] = Int + (Study Count * 2)\nStudy hard for the test months (5, 7, 10, 12)!",
     STA: `Stamina.\nReduces Action Cost!\nformula: Cost - floor(STA/10)\nCurrent Reduction: -${Math.floor(player.stamina / 10)} Cost`,
-    SEN: "Sense (Gaming/Art).\nRequired for certain jobs & romances.\nPlay games to increase!",
+    CHM: "Charm (Social/Vibe).\nRequired for dating & interviews.\nSocialize to increase!\nBuffs Rest efficiency!",
     LUCK: "Luck.\nAffects random events & critical success."
   };
 
@@ -98,7 +98,7 @@ const StatBox: React.FC<{ player: any }> = ({ player }) => {
 
       <StatRow label="INT" value={player.intelligence} color="text-blue-400" onClick={() => handleClick('INT')} />
       <StatRow label="STA" value={player.stamina} color="text-red-400" onClick={() => handleClick('STA')} />
-      <StatRow label="SEN" value={player.sense} color="text-purple-400" onClick={() => handleClick('SEN')} />
+      <StatRow label="CHM" value={player.charm} color="text-pink-400" onClick={() => handleClick('CHM')} />
       <StatRow label="LUCK" value={player.luck} color="text-yellow-400" onClick={() => handleClick('LUCK')} />
 
       <Tooltip activeTooltip={activeTooltip} descriptions={descriptions} />
@@ -115,24 +115,21 @@ const StatusBox: React.FC<{ player: any }> = ({ player }) => {
   };
 
   const descriptions: Record<string, string> = {
-    STRESS: "Fatigue Level.\nHigh Stress = Higher Action Cost!\n[30+] Cost +10  [40+] Cost +20\nRest to recover!",
-    REP: "Social Status.\nCrucial for employment and promotion."
+    STRESS: "Fatigue Level.\nHigh Stress = Higher Action Cost!\n[30+] Cost +10  [40+] Cost +20\nRest to recover!"
   };
 
   return (
     <div className="absolute top-[215px] left-0 bg-gray-900 text-white border-2 border-gray-600 rounded p-2 shadow-lg z-30 flex flex-col gap-2 w-28">
       <div className="text-xs font-bold border-b border-gray-600 pb-1 mb-1 text-center bg-gray-800 text-gray-300">STATUS</div>
 
-
-
-      {/* Reputation */}
-      <div className="flex flex-col cursor-pointer hover:bg-gray-800/50 rounded p-0.5 transition-colors" onClick={() => handleClick('REP')}>
-        <div className="text-[10px] text-gray-400 font-bold hover:text-white transition-colors">REP</div>
-        <div className="flex flex-col gap-0.5 mt-2">
-          <div className="text-[10px] text-right text-gray-200">{player.reputation}/99</div>
-          <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
-            <div className="h-full bg-purple-500 transition-all duration-500" style={{ width: `${Math.min(100, (player.reputation / 99) * 100)}%` }}></div>
-          </div>
+      {/* Stress */}
+      <div className="flex flex-col cursor-pointer hover:bg-gray-800/50 rounded p-0.5 transition-colors" onClick={() => handleClick('STRESS')}>
+        <div className="flex justify-between items-end mb-1">
+          <span className="text-[10px] text-gray-400 font-bold hover:text-white transition-colors">STRESS</span>
+          <div className="text-[10px] text-right text-gray-200">{player.stress}/100</div>
+        </div>
+        <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden border border-gray-600">
+          <div className={`h-full transition-all duration-500 ${player.stress > 80 ? 'bg-red-500 animate-pulse' : player.stress > 50 ? 'bg-yellow-400' : 'bg-green-500'}`} style={{ width: `${Math.min(100, player.stress)}%` }}></div>
         </div>
       </div>
 

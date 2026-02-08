@@ -6,11 +6,26 @@ import LoadGamePopup from '../save/LoadGamePopup';
 
 interface TitleScreenProps {
     onStart: () => void;
+    onLoadGame: () => void;
     onDevMode: () => void;
 }
 
-const TitleScreen: React.FC<TitleScreenProps> = ({ onStart, onDevMode }) => {
+import { useAuthStore } from '../../../store/authStore';
+import AuthModal from '../auth/AuthModal';
+
+const TitleScreen: React.FC<TitleScreenProps> = ({ onStart, onLoadGame, onDevMode }) => {
     const [showLoad, setShowLoad] = useState(false);
+    const [showAuth, setShowAuth] = useState(false);
+
+    const { user, signOut } = useAuthStore();
+
+    const handleContinue = () => {
+        if (!user) {
+            setShowAuth(true);
+            return;
+        }
+        setShowLoad(true);
+    };
 
     return (
         <div className="h-screen w-full">
@@ -25,8 +40,19 @@ const TitleScreen: React.FC<TitleScreenProps> = ({ onStart, onDevMode }) => {
 
                     <div className="flex flex-col gap-3 w-48">
                         <MenuButtons
+                            user={user}
+                            onSignOut={() => signOut()}
+                            onGoogleLogin={async () => {
+                                try {
+                                    const { signInWithGoogle } = await import('../../../lib/supabase');
+                                    await signInWithGoogle();
+                                } catch (e) {
+                                    console.error(e);
+                                    alert("Login Failed");
+                                }
+                            }}
                             onNewGame={onStart}
-                            onContinue={() => setShowLoad(true)}
+                            onContinue={handleContinue}
                             onDevMode={onDevMode}
                         />
                     </div>
@@ -40,8 +66,13 @@ const TitleScreen: React.FC<TitleScreenProps> = ({ onStart, onDevMode }) => {
                         onClose={() => setShowLoad(false)}
                         onLoadComplete={() => {
                             setShowLoad(false);
-                            onStart(); // Switch to Game Screen
+                            onLoadGame(); // Switch directly to Game Logic
                         }}
+                    />
+
+                    <AuthModal
+                        isOpen={showAuth}
+                        onClose={() => setShowAuth(false)}
                     />
                 </div>
             </PixelBackground>

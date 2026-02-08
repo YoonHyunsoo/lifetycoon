@@ -7,6 +7,7 @@ import SavePopup from '../ui/SavePopup';
 import PixelGauge from '../ui/3.3_PixelGauge';
 import HallOfWealth from '../events/4.9_HallOfWealth';
 import AuthModal from '../auth/AuthModal'; // Import Auth
+import { useAuthStore } from '../../../store/authStore';
 
 const SystemBar: React.FC = () => {
     const { time, isPlaying, togglePlay, power, maxPower, player } = useGameStore();
@@ -18,6 +19,11 @@ const SystemBar: React.FC = () => {
 
     // Trigger Popup
     const handleSaveClick = () => {
+        const { user } = useAuthStore.getState();
+        if (!user) {
+            setIsAuthOpen(true); // Open Login instead
+            return;
+        }
         setIsSavePopupOpen(true);
     };
 

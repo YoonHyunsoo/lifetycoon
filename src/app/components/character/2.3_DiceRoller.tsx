@@ -4,7 +4,7 @@ import PixelButton from '../ui/8.2_PixelButton';
 interface DiceRollerProps {
     onRoll: () => void;
     // Pass current stats to display on dice
-    currentStats: { intelligence: number; stamina: number; sense: number; luck: number };
+    currentStats: { intelligence: number; stamina: number; charm: number; luck: number };
     rolling?: boolean;
 }
 
@@ -31,14 +31,14 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll, currentStats, rolling =
     // If NOT rolling, show the ACTUAL properties from currentStats.
     const displayValues = rolling
         ? [...randomValues, '?']
-        : [currentStats.intelligence, currentStats.stamina, currentStats.sense, '?'];
+        : [currentStats.intelligence, currentStats.stamina, currentStats.charm, '?'];
 
     return (
         <div className="flex flex-col items-center gap-6 p-4 bg-gray-800 border-4 border-gray-700 rounded-lg shadow-xl w-full">
 
             {/* Dice Container - Now 4 Dice */}
             <div className="flex gap-2 justify-center w-full">
-                {['INT', 'STA', 'SEN', 'LUCK'].map((label, idx) => {
+                {['INT', 'STA', 'CHM', 'LUCK'].map((label, idx) => {
                     const isLuck = label === 'LUCK';
                     const value = displayValues[idx];
 
@@ -46,7 +46,7 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll, currentStats, rolling =
                     let colorClass = "text-black bg-white";
                     if (label === 'INT') colorClass = "text-blue-900 bg-blue-100";
                     if (label === 'STA') colorClass = "text-red-900 bg-red-100";
-                    if (label === 'SEN') colorClass = "text-purple-900 bg-purple-100";
+                    if (label === 'CHM') colorClass = "text-pink-900 bg-pink-100";
                     if (isLuck) colorClass = "text-yellow-500 bg-gray-900 border-yellow-500";
 
                     return (

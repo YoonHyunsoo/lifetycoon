@@ -25,7 +25,7 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
                             ...s.player,
                             cash: s.player.cash - 50000000,
                             jobTitle: 'Founder (Seed)',
-                            reputation: s.player.reputation + 10,
+                            // reputation: s.player.reputation + 10, // REMOVED
                             stress: s.player.stress + 20
                         },
                         feedback: { id: Date.now(), text: "Founded Startup!", color: "text-purple-500" }
@@ -68,7 +68,7 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
                                 ...s.player,
                                 cash: s.player.cash - partner.cost,
                                 spouse: { name: partner.name, job: partner.job, salary: partner.salary },
-                                reputation: s.player.reputation + 5,
+                                // reputation: s.player.reputation + 5, // REMOVED
                                 stress: Math.max(0, s.player.stress - 10)
                             },
                             feedback: { id: Date.now(), text: "Just Married!", color: "text-pink-500" }
@@ -154,7 +154,7 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
                 {
                     label: 'Return it (+500k)',
                     action: (s: GameState) => ({
-                        player: { ...s.player, cash: s.player.cash + 500000, reputation: s.player.reputation + 5 },
+                        player: { ...s.player, cash: s.player.cash + 500000 },
                         feedback: { id: Date.now(), text: "Good Karma! +500k", color: "text-green-400" }
                     })
                 },
@@ -163,7 +163,7 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
                     isAd: true,
                     adRewardType: 'DOUBLE_REWARD',
                     action: (s: GameState) => ({
-                        player: { ...s.player, cash: s.player.cash + 1000000, reputation: s.player.reputation + 10 },
+                        player: { ...s.player, cash: s.player.cash + 1000000 },
                         feedback: { id: Date.now(), text: "Generous Reward! +1M", color: "text-yellow-400 font-bold" }
                     })
                 }
@@ -186,11 +186,11 @@ export const checkRandomEvents = (state: any): GameEvent | null => {
             choices: [
                 {
                     label: 'Ask for Allowance',
-                    action: (s: GameState) => ({ player: { ...s.player, cash: s.player.cash + 500000, reputation: s.player.reputation - 2 } })
+                    action: (s: GameState) => ({ player: { ...s.player, cash: s.player.cash + 500000 } })
                 },
                 {
                     label: 'Give Gift',
-                    action: (s: GameState) => ({ player: { ...s.player, cash: s.player.cash - 200000, reputation: s.player.reputation + 5, stress: Math.max(0, s.player.stress - 5) } })
+                    action: (s: GameState) => ({ player: { ...s.player, cash: s.player.cash - 200000, stress: Math.max(0, s.player.stress - 5) } })
                 }
             ]
         };
@@ -254,7 +254,7 @@ export const checkDatingEvent = (state: any): GameEvent | null => {
                             ...s.player,
                             cash: s.player.cash - evt.cost,
                             stress: Math.max(0, s.player.stress + evt.stress), // stress is negative here, so it reduces
-                            reputation: s.player.reputation + evt.rep
+                            // reputation: s.player.reputation + evt.rep // REMOVED
                         },
                         feedback: { id: Date.now(), text: "Relationship Deepened!", color: "text-pink-500" }
                     };
@@ -322,12 +322,12 @@ export const checkExpandedRandomEvents = (state: any): GameEvent | null => {
             description: "A colleague is getting married.\nCongratulatory money required.",
             choices: [
                 {
-                    label: "Pay 100k (Rep+1)",
-                    action: (s: GameState) => ({ player: { ...s.player, cash: s.player.cash - 100000, reputation: s.player.reputation + 1 } })
+                    label: "Pay 100k (Good Karma)",
+                    action: (s: GameState) => ({ player: { ...s.player, cash: s.player.cash - 100000, charm: s.player.charm + 1 } })
                 },
                 {
-                    label: "Skip (Rep-1)",
-                    action: (s: GameState) => ({ player: { ...s.player, reputation: s.player.reputation - 1 } })
+                    label: "Skip (Charm-1)",
+                    action: (s: GameState) => ({ player: { ...s.player, charm: Math.max(0, s.player.charm - 1) } })
                 }
             ]
         };
@@ -382,7 +382,7 @@ export const checkExamEvents = (state: any): GameEvent | null => {
                     ...s.player,
                     cash: s.player.cash + 1000000,
                     debtWaiverTickets: (s.player.debtWaiverTickets || 0) + 1,
-                    reputation: s.player.reputation + 2
+                    // reputation: s.player.reputation + 2 // REMOVED
                 }
             });
         } else if (score >= 80) {
@@ -392,7 +392,7 @@ export const checkExamEvents = (state: any): GameEvent | null => {
                 player: {
                     ...s.player,
                     cash: s.player.cash + 1000000,
-                    reputation: s.player.reputation + 1
+                    // reputation: s.player.reputation + 1 // REMOVED
                 }
             });
         } else if (score > 50) {
@@ -453,7 +453,7 @@ const FRIEND_POOL: FriendArchetype[] = [
     // A Rank
     { id: 'startup_ceo', rank: 'A', type: 'investment', name: 'Startup CEO', desc: 'Luck +2\nAdult: Venture Executive' },
     { id: 'school_president', rank: 'A', type: 'normal', name: 'School President', desc: 'All Actions +1 Stat Bonus' },
-    { id: 'kpop_trainee', rank: 'A', type: 'normal', name: 'K-Pop Trainee', desc: 'Weekly Sense +2, Int -1' },
+    { id: 'kpop_trainee', rank: 'A', type: 'normal', name: 'K-Pop Trainee', desc: 'Weekly Charm +2, Int -1' },
     { id: 'model_gf', rank: 'A', type: 'girlfriend', name: 'Model GF', desc: 'Stress -15/wk, Max Power -30', modifiers: { maxPower: -30 } },
 
     // B Rank
@@ -463,9 +463,9 @@ const FRIEND_POOL: FriendArchetype[] = [
     { id: 'popular_gf', rank: 'B', type: 'girlfriend', name: 'Popular GF', desc: 'Stress -10/wk, Max Power -20', modifiers: { maxPower: -20 } },
 
     // C Rank
-    { id: 'gamer', rank: 'C', type: 'normal', name: 'Gamer', desc: 'Play: Sense +1 Bonus' },
+    { id: 'gamer', rank: 'C', type: 'normal', name: 'Gamer', desc: 'Social: Charm +1 Bonus' },
     { id: 'influencer', rank: 'C', type: 'normal', name: 'Influencer', desc: 'Weekly Rep +1' },
-    { id: 'artist', rank: 'C', type: 'normal', name: 'Artist', desc: 'Weekly Sense +1' },
+    { id: 'artist', rank: 'C', type: 'normal', name: 'Artist', desc: 'Weekly Charm +1' },
     { id: 'cute_gf', rank: 'C', type: 'girlfriend', name: 'Cute GF', desc: 'Stress -7/wk, Max Power -15', modifiers: { maxPower: -15 } },
 
     // D Rank
@@ -552,10 +552,10 @@ export const checkFriendEvents = (state: any): GameEvent | null => {
 
     // Helper: Grudge
     const applyGrudge = (s: GameState, sourceName: string) => {
-        const senLoss = 5;
+        const chmLoss = 5;
         return {
-            player: { ...s.player, sense: Math.max(0, s.player.sense - senLoss) },
-            feedback: { id: Date.now(), text: `${sourceName} holds a grudge! (Sen -${senLoss})`, color: 'text-red-500' }
+            player: { ...s.player, charm: Math.max(0, s.player.charm - chmLoss) },
+            feedback: { id: Date.now(), text: `${sourceName} holds a grudge! (Chm -${chmLoss})`, color: 'text-red-500' }
         };
     };
 
@@ -632,5 +632,68 @@ export const checkFriendEvents = (state: any): GameEvent | null => {
         title: 'New Connection!',
         description: description,
         choices: choices
+    };
+};
+
+// [NEW] Socialize Action Event (Quest/Info) - Low Probability
+export const checkSocializeEvent = (_player: any): GameEvent | null => {
+    const r = Math.random() * 100;
+
+    // 1. Insider Info (Stock) - 40% chance of the trigger
+    if (r < 40) {
+        return {
+            id: `soc-info-${Date.now()}`,
+            type: 'choice',
+            title: "Rumor Heard",
+            description: "While socializing, you overheard stock market gossip.",
+            choices: [
+                {
+                    label: "Network (-5 Sta, +2 Charm)",
+                    action: (s: any) => ({
+                        player: { ...s.player, stamina: Math.max(0, s.player.stamina - 5), charm: s.player.charm + 2 },
+                        feedback: { id: Date.now(), text: "Networking Success! (+2 Charm)", color: "text-pink-400" }
+                    })
+                },
+                { label: "Ignore", action: () => ({}) }
+            ]
+        };
+    }
+
+    // 2. Project Proposal - 30% chance
+    if (r < 70) {
+        return {
+            id: `soc-job-${Date.now()}`,
+            type: 'choice',
+            title: "Project Offer",
+            description: "An acquaintance needs help with a project.\n(Requires: Int 15+)",
+            choices: [
+                {
+                    label: "Accept (+300k)",
+                    action: (s: any) => {
+                        if (s.player.intelligence < 15) return { feedback: { id: Date.now(), text: "Not smart enough...", color: "text-red-500" } };
+                        return {
+                            player: { ...s.player, cash: s.player.cash + 300000, stress: s.player.stress + 5 },
+                            feedback: { id: Date.now(), text: "Project Done! (+300k)", color: "text-green-400" }
+                        };
+                    }
+                },
+                { label: "Decline", action: () => ({}) }
+            ]
+        };
+    }
+
+    // 3. New Connection (Charm Boost) - 30% chance
+    return {
+        id: `soc-meet-${Date.now()}`,
+        type: 'notification', // Just a popup
+        title: "New Connection",
+        description: "You met someone interesting!\nThey gave you some life advice.",
+        choices: [{
+            label: "Thanks!",
+            action: (s: any) => ({
+                player: { ...s.player, charm: s.player.charm + 1 }, // Bonus Charm
+                feedback: { id: Date.now(), text: "Inspired! (+1 Charm)", color: "text-pink-400" }
+            })
+        }]
     };
 };
