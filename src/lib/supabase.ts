@@ -21,7 +21,9 @@ export const signInWithGoogle = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-            redirectTo: `${window.location.origin}/`, // Redirects back to homepage
+            redirectTo: import.meta.env.VITE_SITE_URL
+                ? `${import.meta.env.VITE_SITE_URL}/`
+                : `${window.location.origin}/`, // Defaults to origin, but can be overridden for mobile testing
             queryParams: {
                 access_type: 'offline', // Request refresh token
                 prompt: 'consent',

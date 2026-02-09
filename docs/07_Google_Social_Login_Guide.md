@@ -61,6 +61,13 @@ Mudspoon Tycoon의 구글 로그인을 활성화하기 위한 **Google Cloud Pla
    - **Client Secret** -> `Client Secret` 칸에 붙여넣기
 3. **Enable Sign in with Google** 토글을 켜서 활성화합니다.
 4. **[Save]** 버튼을 누릅니다.
+5. **URL Configuration (중요!)**:
+   - 같은 페이지(`Authentication > URL Configuration`)의 **Redirect URLs** 섹션을 찾습니다.
+   - **[Add URL]** 버튼을 누르고, **사용할 도메인을 모두 추가**해야 합니다.
+     - `http://localhost:5173/**` (로컬 개발용)
+     - `https://mudapp.io/**` (실제 배포 주소)
+     - `https://life-tycoon.vercel.app/**` (Vercel 배포 주소)
+   - **Save**를 눌러 저장합니다. 이 과정이 없으면 모바일에서 "localhost refused to connect" 오류가 발생합니다.
 
 ---
 
