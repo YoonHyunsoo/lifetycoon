@@ -13,6 +13,7 @@ import CareerPathPopup from '../events/4.3_CareerPathPopup';
 import EndingPopup from '../events/4.8_EndingPopup';
 import FX_FloatingText from '../ui/FX_FloatingText';
 import DevControls from '../dev/DevControls';
+import AdSenseBanner from '../ads/AdSenseBanner';
 
 // import { saveGame } from '../../../lib/saveSystem';
 
@@ -86,6 +87,16 @@ const MainGameScreen: React.FC = () => {
                 {/* Action Grid */}
                 <div className="h-24">
                     <ActionBar />
+                </div>
+
+                {/* AdSense Banner */}
+                <div className="bg-black flex justify-center py-1">
+                    <AdSenseBanner
+                        adClient="ca-pub-9382505899208273"
+                        adSlot="1234567890" // Replace with a valid ad slot ID if improved targeting is needed, otherwise auto ads might handle it or use a generic slot.
+                        adFormat="auto"
+                        fullWidthResponsive={true}
+                    />
                 </div>
             </div>
 
